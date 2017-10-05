@@ -1,4 +1,4 @@
-#imports
+# imports
 from __future__ import print_function
 
 __author__ = 'Emma'
@@ -37,7 +37,7 @@ class Grid:
             for j in range(self.width):
                 # check if it should be a white square
                 if (i % 2 and not j % 2) or (not i % 2 and j % 2):
-                    self.squares[i].append('0')
+                    self.squares[i].append(' ')
                 # check if square should  contain black piece
                 elif i < 3:
                     self.squares[i].append("b")
@@ -46,7 +46,7 @@ class Grid:
                     self.squares[i].append("w")
                 # else square is black
                 else:
-                    self.squares[i].append('1')
+                    self.squares[i].append(' ')
 
     # print grid method
     def printGrid(self):

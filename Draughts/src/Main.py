@@ -8,7 +8,7 @@ __project__ = 'Draughts'
 # define main
 def main():
     # create grid of width and height
-    grid = Grid(8,8)
+    grid = Grid(8, 8)
     # print grid
     grid.printGrid()
 
