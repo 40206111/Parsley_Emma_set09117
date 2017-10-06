@@ -9,7 +9,7 @@ __project__ = 'Draughts'
 class Grid:
 
     # grid constructor
-    def __init__(self, width, height):
+    def __init__(self, width, height, rows):
         # check that width isn't larger than the English alphabet
         if width > 26:
             # set width to 26
@@ -17,6 +17,7 @@ class Grid:
         else:
             # set width to given width
             self.width = width
+
         # check that height isn't greater than 999
         if height > 999:
             # set height to 999
@@ -24,14 +25,24 @@ class Grid:
         else:
             # set height to given height
             self.height = height
-        # Create list of grid squares for the grid height
+
+        # set amount of rows counters are on
+        if rows <= self.height/2:
+            self.rows = rows
+        else:
+            self.rows = int(self.height/2)
+
+        # Create list of grid squares variable
         self.squares = []
-        for i in range(self.height):
-            self.squares.append([])
+        # Create Grid
         self.createGrid()
 
     # create grid method
     def createGrid(self):
+        # Create amount of rows needed
+        for i in range(self.height):
+            self.squares.append([])
+
         # loop through height and width
         for i in range(self.height):
             for j in range(self.width):
@@ -39,10 +50,10 @@ class Grid:
                 if (i % 2 and not j % 2) or (not i % 2 and j % 2):
                     self.squares[i].append(' ')
                 # check if square should  contain black piece
-                elif i < 3:
+                elif i < self.rows:
                     self.squares[i].append("b")
                 # check if square should contain white piece
-                elif i > self.height - 4:
+                elif i >= self.height - self.rows:
                     self.squares[i].append("w")
                 # else square is black
                 else:
