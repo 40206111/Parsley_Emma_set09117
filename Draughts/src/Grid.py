@@ -1,6 +1,8 @@
 # imports
 from __future__ import print_function
 
+from src.Piece import Piece
+
 __author__ = 'Emma'
 __project__ = 'Draughts'
 
@@ -10,35 +12,79 @@ class Grid:
 
     # grid constructor
     def __init__(self, width, height, rows):
-        # check that width isn't larger than the English alphabet
-        if width > 26:
-            # set width to 26
-            self.width = 26
-        else:
-            # set width to given width
-            self.width = width
 
-        # check that height isn't greater than 999
-        if height > 999:
-            # set height to 999
-            self.height = 999
-        else:
-            # set height to given height
-            self.height = height
+        self.rows = rows
+        self.width = width
+        self.setWidth(width)
+        self.height = height
+        self.setHeight(height)
+        self.pieceNo = (self.width/2) * self.rows
+        self.pieces = []
 
-        # set amount of rows counters are on
-        if rows <= self.height/2:
-            self.rows = rows
-        else:
-            self.rows = int(self.height/2)
 
         # Create list of grid squares variable
         self.squares = []
         # Create Grid
         self.createGrid()
 
+    # Row Setter
+    def setRows(self, rows):
+        # set amount of rows counters are on
+        if rows < self.height/2:
+            self.rows = rows
+        elif rows == 0:
+            self.rows = 1
+        else:
+            self.rows = int((self.height/2)-1)
+        self.pieceNo = (self.width / 2) * self.rows
+
+    # Row Getter
+    def getRows(self):
+        return self.rows
+
+    # Height Setter
+    def setHeight(self, height):
+        # check that height isn't greater than 999
+        if height > 999:
+            # set height to 999
+            self.height = 999
+        elif height < 4:
+            self.height = 4
+        else:
+            # set height to given height
+            self.height = height
+        self.setRows(self.rows)
+
+    # Height Getter
+    def getHeight(self):
+        return self.height
+
+    # Width Setter
+    def setWidth(self, width):
+        # check that width isn't larger than the English alphabet
+        if width > 26:
+            # set width to 26
+            self.width = 26
+        elif width % 2:
+            self.width = width - 1
+        elif width < 4:
+            self.width = 4
+        else:
+            # set width to given width
+            self.width = width
+        self.pieceNo = (self.width / 2) * self.rows
+
+    # Width Getter
+    def getWidth(self):
+        return self.width
+
     # create grid method
     def createGrid(self):
+
+        #empty squares list
+        self.squares = []
+        self.pieces = []
+
         # Create amount of rows needed
         for i in range(self.height):
             self.squares.append([])
@@ -52,9 +98,11 @@ class Grid:
                 # check if square should  contain black piece
                 elif i < self.rows:
                     self.squares[i].append("b")
+                    self.pieces.append(Piece([i, j], "b"))
                 # check if square should contain white piece
                 elif i >= self.height - self.rows:
                     self.squares[i].append("w")
+                    self.pieces.append(Piece([i, j], "b"))
                 # else square is black
                 else:
                     self.squares[i].append(' ')

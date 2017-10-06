@@ -1,18 +1,20 @@
 # imports
+from __future__ import print_function
 from src.Grid import Grid
 
 __author__ = 'Emma'
 __project__ = 'Draughts'
 
+
 # define Draughts rules
 def rules(grid):
     print("Rules:", end="\n\n• ")
-    print(grid.width, end="x")
-    print(grid.height, end=" grid.\n")
+    print(grid.getWidth(), end="x")
+    print(grid.getHeight(), end=" grid.\n")
     print("• Each player has", end=" ")
-    print(int((grid.width/2 * grid.rows)), end=" pieces\n")
+    print(grid.pieceNo, end=" pieces\n")
     print("• The counters go on the first", end=" ")
-    print(grid.rows, end=" rows\n")
+    print(grid.getRows(), end=" rows\n")
     print("• Pieces can only move Diagonally towards opponent")
     print("• An opponents piece is Captured by jumping your piece over it diagonally")
     print("• All landing spaces must be vacant")
@@ -21,28 +23,59 @@ def rules(grid):
     print("• Pieces that get to the other side of the board become Kings and can move forward and backwards")
     print()
 
+
 def boardSets(grid):
     print("\nBoard Settings:\n")
     print("1. Board Size:", end=" ")
-    print(grid.width, end="x")
-    print(grid.height)
+    print(grid.getWidth(), end="x")
+    print(grid.getHeight())
     print("2. Starting rows:", end=" ")
-    print(grid.rows)
+    print(grid.getRows())
     print("3. White Spaces:  ")
     print("4. Black Spaces: ")
     print("5. Back")
     done = False
     while not done:
-        print("board")
         theIn = input("enter number: ")
         if theIn == '1':
-            print(1)
+            while not done:
+                try:
+                    tempWidth = grid.getWidth()
+                    print("Board width must be even and at least 4 and at most 26")
+                    width = input("Input board width (Type Cancel to cancel): ")
+                    if not width == "Cancel":
+                        grid.setWidth(int(width))
+                        print("Board Height must less than 1000 and at least 4")
+                        height = input("Input board height (Type Cancel to cancel: ")
+                        if not height == "Cancel":
+                            grid.setHeight(int(height))
+                            grid.createGrid()
+                        else:
+                            grid.setWidth(tempWidth)
+                    done = True
+                    boardSets(grid)
+                except:
+                    print("ERROR: please enter whole numbers")
+
         elif theIn == '2':
-            print(2)
+            while not done:
+                try:
+                    rows = input("Input number of rows (Type Cancel to cancel): ")
+                    if not rows == "Cancel":
+                        grid.setRows(int(rows))
+                        grid.createGrid()
+                    done = True
+                    boardSets(grid)
+                except:
+                    print("ERROR: Please enter a whole number")
         elif theIn == '3':
+            done = True
             print(3)
+            boardSets(grid)
         elif theIn == '4':
+            done = True
             print(4)
+            boardSets(grid)
         elif theIn == '5':
             done = True
             settings(grid)
@@ -58,16 +91,23 @@ def pieceSets(grid):
     print("5. Back")
     done = False
     while not done:
-        print("piece")
         theIn = input("enter number: ")
         if theIn == '1':
+            done = True
             print(1)
+            pieceSets(grid)
         elif theIn == '2':
+            done = True
             print(2)
+            pieceSets(grid)
         elif theIn == '3':
+            done = True
             print(3)
+            pieceSets(grid)
         elif theIn == '4':
+            done = True
             print(4)
+            pieceSets(grid)
         elif theIn == '5':
             done = True
             settings(grid)
@@ -81,7 +121,6 @@ def settings(grid):
     print("4. Back")
     done = False
     while not done:
-        print("settings")
         theIn = input("enter number: ")
         if theIn == "1":
             done = True
@@ -100,7 +139,7 @@ def menu(grid):
     done = False
 
     while not done:
-        theIn = input("Play, Settings, Exit: ")
+        theIn = input("Play, Settings, Rules, Exit: ")
         if theIn == "Play":
             print()
             # print grid
@@ -109,6 +148,8 @@ def menu(grid):
         elif theIn == "Settings":
             settings(grid)
             done = True
+        elif theIn == "Rules":
+            rules(grid)
         elif theIn == "Exit":
             done = True
 
