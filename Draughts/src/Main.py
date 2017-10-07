@@ -5,16 +5,17 @@ from Grid import Grid
 __author__ = 'Emma'
 __project__ = 'Draughts'
 
+turn = 0
 
 # define Draughts rules
 def rules(grid):
     print("Rules:", end="\n\n• ")
-    print(grid.getWidth(), end="x")
-    print(grid.getHeight(), end=" grid.\n")
+    print(grid.width, end="x")
+    print(grid.height, end=" grid.\n")
     print("• Each player has", end=" ")
     print(grid.pieceNo, end=" pieces\n")
     print("• The counters go on the first", end=" ")
-    print(grid.getRows(), end=" rows\n")
+    print(grid.rows, end=" rows\n")
     print("• Pieces can only move Diagonally towards opponent")
     print("• An opponents piece is Captured by jumping your piece over it diagonally")
     print("• All landing spaces must be vacant")
@@ -27,10 +28,10 @@ def rules(grid):
 def boardSets(grid):
     print("\nBoard Settings:\n")
     print("1. Board Size:", end=" ")
-    print(grid.getWidth(), end="x")
-    print(grid.getHeight())
+    print(grid.width, end="x")
+    print(grid.height)
     print("2. Starting rows:", end=" ")
-    print(grid.getRows())
+    print(grid.rows)
     print("3. White Spaces:  ")
     print("4. Black Spaces: ")
     print("5. Back")
@@ -139,32 +140,61 @@ def menu(grid):
 
     while not done:
         theIn = input("Play, Settings, Rules, Exit: ")
-        if theIn == "Play":
+        theIn = theIn.lower()
+        if theIn == "play":
             play(grid)
             done = True
-        elif theIn == "Settings":
+        elif theIn == "settings":
             settings(grid)
             done = True
-        elif theIn == "Rules":
+        elif theIn == "rules":
             rules(grid)
-        elif theIn == "Exit":
+        elif theIn == "exit":
             done = True
 
+def validPlaces(grid, x, y):
+    if grid.squares[y][x] == grid.whitePiece or grid.squares[y][x] == grid.whiteKing or grid.squares[y][x] == grid.blackKing:
+        i = y - 1
+        for j in range (-1, 2, 2):
+            grid.testAvailable(i, x+j)
+
+    if grid.squares[y][x] == grid.blackPiece or grid.squares[y][x] == grid.blackKing or grid.squares[y][x] == grid.whiteKing:
+        i = y + 1
+        for j in range (-1, 2, 2):
+            grid.testAvailable(i, x+j)
 
 def play(grid):
     print()
     # print grid
     grid.printGrid()
     done = False
-
+    player = -1
     while not done:
-        print("Type \"Quit\" to quit")
-        theIn = input("Input coordinates of piece you would like to move: ")
+        player *= -1
 
-        if theIn == "Quit"
-            done = True
-        else:
-            print("invalid input")
+        piece = grid.getPieceType(player)
+        king = grid.getKingType(player)
+
+        print("\nType \"Quit\" to quit")
+        theIn = input("Input coordinates of piece you would like to move: ")
+        try:
+            x = ord(theIn[1].upper())
+            x -= ord('A')
+            y = int(theIn[0]) - 1
+            if x < 0 or x > grid.width or y < 0 or y > grid.height:
+                print("\nERROR: invalid input\n")
+                grid.printGrid()
+            else:
+                if grid.squares[y][x] == piece or grid.squares[y][x] == king:
+                    validPlaces(grid, x, y)
+                    grid.printGrid()
+        except:
+            if theIn.lower() == "quit":
+                done = True
+                menu(grid)
+            else:
+                print("\nERROR: invalid input\n")
+                grid.printGrid()
 
 
 # define main

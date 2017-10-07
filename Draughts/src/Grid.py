@@ -19,9 +19,12 @@ class Grid:
         self.height = height
         self.setHeight(height)
         self.pieceNo = (self.width/2) * self.rows
+        self.blackPiece = "b"
+        self.whitePiece = "w"
+        self.blackKing = "B"
+        self.whiteKing = "W"
         self.pieces = []
-        self.usableSquares = []
-
+        self.usableSquares = set([])
         # Create list of grid squares variable
         self.squares = []
         # Create Grid
@@ -38,10 +41,6 @@ class Grid:
             self.rows = int((self.height/2)-1)
         self.pieceNo = (self.width / 2) * self.rows
 
-    # Row Getter
-    def getRows(self):
-        return self.rows
-
     # Height Setter
     def setHeight(self, height):
         # check that height isn't greater than 999
@@ -55,9 +54,6 @@ class Grid:
             self.height = height
         self.setRows(self.rows)
 
-    # Height Getter
-    def getHeight(self):
-        return self.height
 
     # Width Setter
     def setWidth(self, width):
@@ -74,10 +70,6 @@ class Grid:
             self.width = width
         self.pieceNo = (self.width / 2) * self.rows
 
-    # Width Getter
-    def getWidth(self):
-        return self.width
-
 
     # create grid method
     def createGrid(self):
@@ -85,7 +77,7 @@ class Grid:
         # empty squares list
         self.squares = []
         self.pieces = []
-        self.usableSquares = []
+        self.usableSquares = set([])
 
         # Create amount of rows needed
         for i in range(self.height):
@@ -99,18 +91,18 @@ class Grid:
                     self.squares[i].append(' ')
                 # check if square should  contain black piece
                 elif i < self.rows:
-                    self.squares[i].append("b")
-                    self.pieces.append(Piece([i, j], "b"))
-                    self.usableSquares.append([i, j])
+                    self.squares[i].append(self.blackPiece)
+                    self.pieces.append(Piece([i, j], self.blackPiece))
+                    self.usableSquares.update([(i, j)])
                 # check if square should contain white piece
                 elif i >= self.height - self.rows:
-                    self.squares[i].append("w")
-                    self.pieces.append(Piece([i, j], "b"))
-                    self.usableSquares.append([i, j])
+                    self.squares[i].append(self.whitePiece)
+                    self.pieces.append(Piece([i, j], self.whitePiece))
+                    self.usableSquares.update([(i, j)])
                 # else square is black
                 else:
                     self.squares[i].append(' ')
-                    self.usableSquares.append([i, j])
+                    self.usableSquares.update([(i, j)])
 
     # print grid method
     def printGrid(self):
@@ -134,5 +126,18 @@ class Grid:
             # new line
             print()
 
+    def getPieceType(self, player):
+        if player == 1:
+            return self.whitePiece
+        else:
+            return self.blackPiece
 
+    def getKingType(self, player):
+        if player == 1:
+            return self.whiteKing
+        else:
+            return self.blackKing
 
+    def testAvailable(self, i, j):
+        if (i, j) in self.usableSquares and (self.squares[i][j] == " "):
+            self.squares[i][j] = "o"
