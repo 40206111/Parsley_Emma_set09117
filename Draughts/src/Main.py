@@ -1,6 +1,6 @@
 # imports
 from __future__ import print_function
-from src.Grid import Grid
+from Grid import Grid
 
 __author__ = 'Emma'
 __project__ = 'Draughts'
@@ -81,7 +81,6 @@ def boardSets(grid):
             settings(grid)
 
 
-
 def pieceSets(grid):
     print("\nPiece Settings:\n")
     print("1. White pieces: w")
@@ -116,7 +115,7 @@ def pieceSets(grid):
 def settings(grid):
     print("\nSettings:\n")
     print("1. See Board Settings")
-    print("2. Toggle player Colour: white")
+    print("2. Two Player: Om")
     print("3. See Piece settings")
     print("4. Back")
     done = False
@@ -141,9 +140,7 @@ def menu(grid):
     while not done:
         theIn = input("Play, Settings, Rules, Exit: ")
         if theIn == "Play":
-            print()
-            # print grid
-            grid.printGrid()
+            play(grid)
             done = True
         elif theIn == "Settings":
             settings(grid)
@@ -152,6 +149,22 @@ def menu(grid):
             rules(grid)
         elif theIn == "Exit":
             done = True
+
+
+def play(grid):
+    print()
+    # print grid
+    grid.printGrid()
+    done = False
+
+    while not done:
+        print("Type \"Quit\" to quit")
+        theIn = input("Input coordinates of piece you would like to move: ")
+
+        if theIn == "Quit"
+            done = True
+        else:
+            print("invalid input")
 
 
 # define main

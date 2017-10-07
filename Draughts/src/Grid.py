@@ -1,7 +1,7 @@
 # imports
 from __future__ import print_function
 
-from src.Piece import Piece
+from Piece import Piece
 
 __author__ = 'Emma'
 __project__ = 'Draughts'
@@ -20,7 +20,7 @@ class Grid:
         self.setHeight(height)
         self.pieceNo = (self.width/2) * self.rows
         self.pieces = []
-
+        self.usableSquares = []
 
         # Create list of grid squares variable
         self.squares = []
@@ -78,12 +78,14 @@ class Grid:
     def getWidth(self):
         return self.width
 
+
     # create grid method
     def createGrid(self):
 
-        #empty squares list
+        # empty squares list
         self.squares = []
         self.pieces = []
+        self.usableSquares = []
 
         # Create amount of rows needed
         for i in range(self.height):
@@ -99,13 +101,16 @@ class Grid:
                 elif i < self.rows:
                     self.squares[i].append("b")
                     self.pieces.append(Piece([i, j], "b"))
+                    self.usableSquares.append([i, j])
                 # check if square should contain white piece
                 elif i >= self.height - self.rows:
                     self.squares[i].append("w")
                     self.pieces.append(Piece([i, j], "b"))
+                    self.usableSquares.append([i, j])
                 # else square is black
                 else:
                     self.squares[i].append(' ')
+                    self.usableSquares.append([i, j])
 
     # print grid method
     def printGrid(self):
