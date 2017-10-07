@@ -140,4 +140,6 @@ class Grid:
 
     def testAvailable(self, i, j):
         if (i, j) in self.usableSquares and (self.squares[i][j] == " "):
-            self.squares[i][j] = "o"
+            return True
+        else:
+            return False

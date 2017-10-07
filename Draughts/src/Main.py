@@ -152,16 +152,20 @@ def menu(grid):
         elif theIn == "exit":
             done = True
 
+
 def validPlaces(grid, x, y):
     if grid.squares[y][x] == grid.whitePiece or grid.squares[y][x] == grid.whiteKing or grid.squares[y][x] == grid.blackKing:
         i = y - 1
-        for j in range (-1, 2, 2):
-            grid.testAvailable(i, x+j)
+        for j in range(-1, 2, 2):
+            if grid.testAvailable(i, x+j):
+                grid.squares[i][j] = "o"
 
     if grid.squares[y][x] == grid.blackPiece or grid.squares[y][x] == grid.blackKing or grid.squares[y][x] == grid.whiteKing:
         i = y + 1
-        for j in range (-1, 2, 2):
-            grid.testAvailable(i, x+j)
+        for j in range(-1, 2, 2):
+            if grid.testAvailable(i, x+j):
+                grid.squares[i][j] = "o"
+
 
 def play(grid):
     print()
