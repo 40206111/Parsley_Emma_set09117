@@ -23,8 +23,10 @@ class Grid:
         self.whitePiece = "w"
         self.blackKing = "B"
         self.whiteKing = "W"
+        self.validSpace = "o"
         self.pieces = []
         self.usableSquares = set([])
+        self.validPlaces = set([])
         # Create list of grid squares variable
         self.squares = []
         # Create Grid
@@ -54,7 +56,6 @@ class Grid:
             self.height = height
         self.setRows(self.rows)
 
-
     # Width Setter
     def setWidth(self, width):
         # check that width isn't larger than the English alphabet
@@ -69,7 +70,6 @@ class Grid:
             # set width to given width
             self.width = width
         self.pieceNo = (self.width / 2) * self.rows
-
 
     # create grid method
     def createGrid(self):
@@ -143,3 +143,15 @@ class Grid:
             return True
         else:
             return False
+
+    def emptyValids(self):
+        for v in self.validPlaces:
+            self.squares[v[0]][v[1]] = " "
+        self.validPlaces.clear()
+
+
+    def completeMove(self, start1, start2, end1, end2):
+        self.validPlaces.remove((end1, end2))
+        self.squares[end1][end2] = self.squares[start1][start2]
+        self.squares[start1][start2] = " "
+        self.emptyValids()

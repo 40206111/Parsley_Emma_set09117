@@ -158,13 +158,40 @@ def validPlaces(grid, x, y):
         i = y - 1
         for j in range(-1, 2, 2):
             if grid.testAvailable(i, x+j):
-                grid.squares[i][j] = "o"
+                grid.squares[i][x+j] = "o"
+                grid.validPlaces.update([(i, x + j)])
 
     if grid.squares[y][x] == grid.blackPiece or grid.squares[y][x] == grid.blackKing or grid.squares[y][x] == grid.whiteKing:
         i = y + 1
         for j in range(-1, 2, 2):
             if grid.testAvailable(i, x+j):
-                grid.squares[i][j] = "o"
+                grid.squares[i][x+j] = "o"
+                grid.validPlaces.update([(i, x + j)])
+
+
+def move(grid, starty, startx):
+    done = False
+    while not done:
+        print("Input the coordinates of the space you would like to move to (valid spaces shown with  ", end=grid.validSpace)
+        theIn = input("): ")
+        try:
+            x = ord(theIn[1].upper())
+            x -= ord('A')
+            y = int(theIn[0]) - 1
+            if (y, x) in grid.validPlaces:
+                grid.completeMove(starty, startx, y, x)
+                grid.printGrid()
+                done = True
+            else:
+                print("\nERROR: invalid input\n")
+                grid.printGrid()
+        except:
+            if theIn.lower() == "quit":
+                done = True
+                menu(grid)
+            else:
+                print("\nERROR: invalid input\n")
+                grid.printGrid()
 
 
 def play(grid):
@@ -172,13 +199,10 @@ def play(grid):
     # print grid
     grid.printGrid()
     done = False
-    player = -1
+    player = 1
     while not done:
-        player *= -1
-
         piece = grid.getPieceType(player)
         king = grid.getKingType(player)
-
         print("\nType \"Quit\" to quit")
         theIn = input("Input coordinates of piece you would like to move: ")
         try:
@@ -192,13 +216,20 @@ def play(grid):
                 if grid.squares[y][x] == piece or grid.squares[y][x] == king:
                     validPlaces(grid, x, y)
                     grid.printGrid()
+                    move(grid, y, x)
+                    player *= -1
+                    print("\nNEXT PLAYER")
+                    grid.printGrid()
+                else:
+                    grid.printGrid()
+                    print("\nERROR: your piece is not on this square\n")
         except:
             if theIn.lower() == "quit":
                 done = True
                 menu(grid)
             else:
-                print("\nERROR: invalid input\n")
                 grid.printGrid()
+                print("\nERROR: invalid input\n")
 
 
 # define main
