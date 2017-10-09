@@ -41,11 +41,11 @@ def boardSets(grid):
         if theIn == '1':
             while not done:
                 try:
-                    tempWidth = grid.getWidth()
+                    print(1)
+                    tempWidth = grid.width
                     print("Board width must be even and at least 4 and at most 26")
                     width = input("Input board width (Type Cancel to cancel): ")
                     if not width == "Cancel":
-                        grid.setWidth(int(width))
                         print("Board Height must less than 1000 and at least 4")
                         height = input("Input board height (Type Cancel to cancel: ")
                         if not height == "Cancel":
