@@ -7,6 +7,7 @@ __project__ = 'Draughts'
 
 turn = 0
 
+
 # define Draughts rules
 def rules(grid):
     print("Rules:", end="\n\n• ")
@@ -41,18 +42,15 @@ def boardSets(grid):
         if theIn == '1':
             while not done:
                 try:
-                    print(1)
-                    tempWidth = grid.width
                     print("Board width must be even and at least 4 and at most 26")
                     width = input("Input board width (Type Cancel to cancel): ")
-                    if not width == "Cancel":
+                    if not width.lower() == "cancel":
                         print("Board Height must less than 1000 and at least 4")
                         height = input("Input board height (Type Cancel to cancel: ")
-                        if not height == "Cancel":
+                        if not height.lower() == "cancel":
                             grid.setHeight(int(height))
+                            grid.setWidth(int(width))
                             grid.createGrid()
-                        else:
-                            grid.setWidth(tempWidth)
                     done = True
                     boardSets(grid)
                 except:
@@ -62,7 +60,7 @@ def boardSets(grid):
             while not done:
                 try:
                     rows = input("Input number of rows (Type Cancel to cancel): ")
-                    if not rows == "Cancel":
+                    if not rows.lower() == "cancel":
                         grid.setRows(int(rows))
                         grid.createGrid()
                     done = True
@@ -116,7 +114,7 @@ def pieceSets(grid):
 def settings(grid):
     print("\nSettings:\n")
     print("1. See Board Settings")
-    print("2. Two Player: Om")
+    print("2. Two Player: On")
     print("3. See Piece settings")
     print("4. Back")
     done = False
@@ -215,14 +213,18 @@ def play(grid):
             else:
                 if grid.squares[y][x] == piece or grid.squares[y][x] == king:
                     validPlaces(grid, x, y)
-                    grid.printGrid()
-                    move(grid, y, x)
-                    player *= -1
-                    print("\nNEXT PLAYER")
-                    grid.printGrid()
+                    if not grid.validPlaces:
+                        print("\nERROR: No valid movements\n")
+                        grid.printGrid()
+                    else:
+                        grid.printGrid()
+                        move(grid, y, x)
+                        player *= -1
+                        print("\nNEXT PLAYER")
+                        grid.printGrid()
                 else:
-                    grid.printGrid()
                     print("\nERROR: your piece is not on this square\n")
+                    grid.printGrid()
         except:
             if theIn.lower() == "quit":
                 done = True

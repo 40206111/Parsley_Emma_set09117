@@ -18,7 +18,7 @@ class Grid:
         self.setWidth(width)
         self.height = height
         self.setHeight(height)
-        self.pieceNo = (self.width/2) * self.rows
+        self.pieceNo = int((self.width/2) * self.rows)
         self.blackPiece = "b"
         self.whitePiece = "w"
         self.blackKing = "B"
