@@ -24,6 +24,9 @@ class Grid:
         self.blackKing = "B"
         self.whiteKing = "W"
         self.validSpace = "o"
+        self.whiteSpace = " "
+        self.blackSpace = " "
+        self.player = 1
         self.pieces = []
         self.usableSquares = set([])
         self.validPlaces = set([])
@@ -73,7 +76,7 @@ class Grid:
 
     # create grid method
     def createGrid(self):
-
+        self.player = 1
         # empty squares list
         self.squares = []
         self.pieces = []
@@ -88,7 +91,7 @@ class Grid:
             for j in range(self.width):
                 # check if it should be a white square
                 if (i % 2 and not j % 2) or (not i % 2 and j % 2):
-                    self.squares[i].append(' ')
+                    self.squares[i].append(self.whiteSpace)
                 # check if square should  contain black piece
                 elif i < self.rows:
                     self.squares[i].append(self.blackPiece)
@@ -101,7 +104,7 @@ class Grid:
                     self.usableSquares.update([(i, j)])
                 # else square is black
                 else:
-                    self.squares[i].append(' ')
+                    self.squares[i].append(self.blackSpace)
                     self.usableSquares.update([(i, j)])
 
     # print grid method
@@ -126,14 +129,14 @@ class Grid:
             # new line
             print()
 
-    def getPieceType(self, player):
-        if player == 1:
+    def getPieceType(self):
+        if self.player == 1:
             return self.whitePiece
         else:
             return self.blackPiece
 
-    def getKingType(self, player):
-        if player == 1:
+    def getKingType(self):
+        if self.player == 1:
             return self.whiteKing
         else:
             return self.blackKing
@@ -148,7 +151,6 @@ class Grid:
         for v in self.validPlaces:
             self.squares[v[0]][v[1]] = " "
         self.validPlaces.clear()
-
 
     def completeMove(self, start1, start2, end1, end2):
         self.validPlaces.remove((end1, end2))
