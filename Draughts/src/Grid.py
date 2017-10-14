@@ -154,6 +154,12 @@ class Grid:
 
     def completeMove(self, start1, start2, end1, end2):
         self.validPlaces.remove((end1, end2))
-        self.squares[end1][end2] = self.squares[start1][start2]
-        self.squares[start1][start2] = " "
+        # check if should become king
+        if end1 == 0 and self.squares[start1][start2] == self.whitePiece:
+            self.squares[end1][end2] = self.whiteKing
+        elif end1 == self.height - 1 and self.squares[start1][start2] == self.blackPiece:
+            self.squares[end1][end2] = self.blackKing
+        else:
+            self.squares[end1][end2] = self.squares[start1][start2]
+        self.squares[start1][start2] = self.blackSpace
         self.emptyValids()

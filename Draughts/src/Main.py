@@ -25,7 +25,7 @@ def rules(grid):
 
 
 # settings for board
-def boardSets(grid):
+def boardSets(grid, change):
     print("\nBoard Settings:\n")
     print("1. Board Size:", end=" ")
     print(grid.width, end="x")
@@ -38,7 +38,6 @@ def boardSets(grid):
     print("\n6. Back")
 
     done = False
-    change = False
 
     # loop while not done
     while not done:
@@ -56,13 +55,15 @@ def boardSets(grid):
                             grid.setHeight(int(height))
                             grid.setWidth(int(width))
                             change = True
+                            print(change)
                     done = True
-                    boardSets(grid)
+                    boardSets(grid, change)
                 except:
                     print("ERROR: please enter whole numbers")
 
         # Starting rows setting
         elif theIn == '2':
+            print(change)
             while not done:
                 try:
                     rows = input("Input number of rows (Type Cancel to cancel): ")
@@ -70,7 +71,7 @@ def boardSets(grid):
                         grid.setRows(int(rows))
                         change = True
                     done = True
-                    boardSets(grid)
+                    boardSets(grid, change)
                 except:
                     print("ERROR: Please enter a whole number")
 
@@ -83,7 +84,7 @@ def boardSets(grid):
                 change = True
             except:
                 print("ERROR: you did not input anything")
-            boardSets(grid)
+            boardSets(grid, change)
         # Black space setting
         elif theIn == '4':
             space = input("Input the character you want to represent black spaces\nOnly the first character you type will be used: ")
@@ -92,7 +93,7 @@ def boardSets(grid):
                 change = True
             except:
                 print("ERROR: you did not input anything")
-            boardSets(grid)
+            boardSets(grid, change)
         # valid space setting
         elif theIn == '5':
             space = input("Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
@@ -104,6 +105,7 @@ def boardSets(grid):
             boardSets(grid)
         # back to settings
         elif theIn == '6':
+            print(change)
             if change:
                 grid.createGrid()
             done = True
@@ -111,7 +113,7 @@ def boardSets(grid):
 
 
 # settings for pieces
-def pieceSets(grid):
+def pieceSets(grid, change):
     print("\nPiece Settings:\n")
     print("1. White pieces: ", end=grid.whitePiece)
     print("\n2. Black pieces: ", end=grid.blackPiece)
@@ -119,7 +121,6 @@ def pieceSets(grid):
     print("\n4. Black Kings: ", end=grid.blackKing)
     print("\n5. Back")
 
-    change = False
     done = False
     # loop while not done
     while not done:
@@ -134,7 +135,7 @@ def pieceSets(grid):
                 change = True
             except:
                 print("ERROR: you did not input anything")
-            pieceSets(grid)
+            pieceSets(grid, change)
         # black piece setting
         elif theIn == '2':
             done = True
@@ -144,7 +145,7 @@ def pieceSets(grid):
                 change = True
             except:
                 print("ERROR: you did not input anything")
-            pieceSets(grid)
+            pieceSets(grid, change)
         # white king setting
         elif theIn == '3':
             done = True
@@ -164,7 +165,7 @@ def pieceSets(grid):
                 change = True
             except:
                 print("ERROR: you did not input anything")
-            pieceSets(grid)
+            pieceSets(grid, change)
         elif theIn == '5':
             done = True
             if change:
@@ -188,11 +189,11 @@ def settings(grid):
         # board settings
         if theIn == "1":
             done = True
-            boardSets(grid)
+            boardSets(grid, False)
         # piece settings
         elif theIn == '2':
             done = True
-            pieceSets(grid)
+            pieceSets(grid, False)
         # toggle 2 players
         elif theIn == '3':
             done = True
