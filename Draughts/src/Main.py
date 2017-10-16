@@ -315,23 +315,21 @@ def play(grid):
         print("\nType \"Quit\" to quit")
         theIn = input("Input coordinates of piece you would like to move: ")
         try:
-            theIn.upper()
             x = 1000
             y = 1000
-            if 65 <= ord(theIn[len(theIn)-1]) <= 90:
-                print(ord(theIn[len(theIn) - 1]))
+            if 65 <= ord(theIn[len(theIn)-1].upper()) <= 90:
                 # set x to int
-                x = ord(theIn[1])
+                x = ord(theIn[1].upper())
                 x -= ord('A')
                 # set y to given int minus 1
                 y = int(theIn[0]) - 1
-            elif 65 <= ord(theIn[0]) <= 90:
-                print(ord(theIn[0]))
+            elif 65 <= ord(theIn[0].upper()) <= 90:
                 # set x to int
-                x = ord(theIn[0])
+                x = ord(theIn[0].upper())
                 x -= ord('A')
                 # set y to given int minus 1
                 y = int(theIn[1]) - 1
+
             # check that values are within grid boundaries
             if x < 0 or x > grid.width or y < 0 or y > grid.height:
                 print("\nERROR: invalid input\n")
