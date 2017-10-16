@@ -163,3 +163,15 @@ class Grid:
             self.squares[end1][end2] = self.squares[start1][start2]
         self.squares[start1][start2] = self.blackSpace
         self.emptyValids()
+
+    def opposites(self, piece):
+        if piece == self.whitePiece or piece == self.whiteKing:
+            return self.blackPiece
+        if piece == self.blackPiece or piece == self.blackKing:
+            return self.whitePiece
+
+    def kings(self, piece):
+        if piece == self.whitePiece or piece == self.whiteKing:
+            return self.whiteKing
+        if piece == self.blackPiece or piece == self.blackKing:
+            return self.blackKing

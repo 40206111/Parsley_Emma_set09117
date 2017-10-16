@@ -99,10 +99,10 @@ def boardSets(grid, change):
             space = input("Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
             try:
                 grid.validSpace = space[0]
-                change =True
+                change = True
             except:
                 print("ERROR: you did not input anything")
-            boardSets(grid)
+            boardSets(grid, change)
         # back to settings
         elif theIn == '6':
             print(change)
@@ -236,7 +236,6 @@ def menu(grid):
 
 # method to look for valid places to move to
 def validPlaces(grid, x, y):
-    # check if it's a white piece or any king
     if grid.squares[y][x] == grid.whitePiece or grid.squares[y][x] == grid.whiteKing or grid.squares[y][x] == grid.blackKing:
         # set i to row above
         i = y - 1
@@ -248,7 +247,6 @@ def validPlaces(grid, x, y):
                 grid.squares[i][x+j] = grid.validSpace
                 # add grid space to valid spaces
                 grid.validPlaces.update([(i, x + j)])
-
     # check if it's a black piece or any king
     if grid.squares[y][x] == grid.blackPiece or grid.squares[y][x] == grid.blackKing or grid.squares[y][x] == grid.whiteKing:
         # set i to row below
@@ -355,10 +353,6 @@ def play(grid):
                     y = int(theIn) - 1
                 # check that values are within grid boundaries
                 if x < 0 or x > grid.width or y < 0 or y > grid.height:
-                    print(x)
-                    print(y)
-                    print(grid.width)
-                    print(grid.height)
                     print("\nERROR: invalid input\n")
                     grid.printGrid()
                 else:
@@ -366,6 +360,7 @@ def play(grid):
                     if grid.squares[y][x] == piece or grid.squares[y][x] == king:
                         # call valid places method
                         validPlaces(grid, x, y)
+                        print(grid.validPlaces)
                         # check that there where valid spaces
                         if not grid.validPlaces:
                             print("\nERROR: No valid movements\n")
@@ -387,8 +382,8 @@ def play(grid):
                         print("\nERROR: your piece is not on this square\n")
                         grid.printGrid()
         except:
-                print("\nERROR: invalid input\n")
-                grid.printGrid()
+            print("\nERROR: invalid input\n")
+            grid.printGrid()
 
 
 # define main
