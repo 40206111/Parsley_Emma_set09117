@@ -270,7 +270,6 @@ def move(grid, starty, startx):
         print("Input the coordinates of the space you would like to move to \n(type cancel to select other piece, valid spaces shown with  ", end=grid.validSpace)
         theIn = input("): ")
         try:
-
             # check if player wanted to quit
             if theIn.lower() == "quit":
                 done = True
@@ -360,7 +359,6 @@ def play(grid):
                     if grid.squares[y][x] == piece or grid.squares[y][x] == king:
                         # call valid places method
                         validPlaces(grid, x, y)
-                        print(grid.validPlaces)
                         # check that there where valid spaces
                         if not grid.validPlaces:
                             print("\nERROR: No valid movements\n")

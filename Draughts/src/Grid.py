@@ -175,3 +175,22 @@ class Grid:
             return self.whiteKing
         if piece == self.blackPiece or piece == self.blackKing:
             return self.blackKing
+
+    def takes(self, piece, x, y):
+        i = y + 1
+        k = 1
+        if self.whiteKing == self.kings(piece):
+            i = y - 1
+            k = -1
+
+        for j in range(-1, 2, 2):
+            if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
+                print(self.kings(self.opposites(piece)))
+                print(self.kings(self.squares[i][x+j]))
+                if self.kings(self.opposites(piece)) == self.kings(self.squares[i][x+j]):
+                    if self.testAvailable(i + k, x+j+j):
+                        # set grid space to be a valid space
+                        self.squares[i + k][x+j + j] = self.validSpace
+                        # add grid space to valid spaces
+                        self.validPlaces.update([(i + k, x + j + j)])
+                        self.takes(piece, i+k, x+j+j)
