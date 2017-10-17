@@ -55,7 +55,6 @@ def boardSets(grid, change):
                             grid.setHeight(int(height))
                             grid.setWidth(int(width))
                             change = True
-                            print(change)
                     done = True
                     boardSets(grid, change)
                 except:
@@ -63,7 +62,6 @@ def boardSets(grid, change):
 
         # Starting rows setting
         elif theIn == '2':
-            print(change)
             while not done:
                 try:
                     rows = input("Input number of rows (Type Cancel to cancel): ")
@@ -87,6 +85,7 @@ def boardSets(grid, change):
             boardSets(grid, change)
         # Black space setting
         elif theIn == '4':
+            done = True
             space = input("Input the character you want to represent black spaces\nOnly the first character you type will be used: ")
             try:
                 grid.blackSpace = space[0]
@@ -96,6 +95,7 @@ def boardSets(grid, change):
             boardSets(grid, change)
         # valid space setting
         elif theIn == '5':
+            done = True
             space = input("Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
             try:
                 grid.validSpace = space[0]
@@ -386,9 +386,6 @@ def play(grid):
 
 # define main
 def main():
-    # A to Z
-    print(ord('A'))
-    print(ord('Z'))
     # create grid of width and height
     grid = Grid(8, 8, 3)
     # print rules

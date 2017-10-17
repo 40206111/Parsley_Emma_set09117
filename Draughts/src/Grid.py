@@ -126,8 +126,18 @@ class Grid:
             for j in range(self.width):
                 # print square contents
                 print(self.squares[i][j], end='  ')
+            # print column numbers
+            print(i + 1, end='\t')
             # new line
             print()
+        # print gap before letters
+        print(' ', end='\t')
+        # loop through width
+        for i in range(self.width):
+            # print ascii letter for row
+            print(chr(65 + i), end='  ')
+        # new line
+        print()
 
     def getPieceType(self):
         if self.player == 1:
