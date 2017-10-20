@@ -236,7 +236,7 @@ def menu(grid):
 
 # method to look for valid places to move to
 def validPlaces(grid, x, y):
-    if grid.squares[y][x] == grid.whitePiece or grid.squares[y][x] == grid.whiteKing or grid.squares[y][x] == grid.blackKing:
+    if grid.squares[y][x].player == 1 or grid.squares[y][x].king != 0:
         # set i to row above
         i = y - 1
         # look in column before and column after
@@ -248,7 +248,7 @@ def validPlaces(grid, x, y):
                 # add grid space to valid spaces
                 grid.validPlaces.update([(i, x + j)])
     # check if it's a black piece or any king
-    if grid.squares[y][x] == grid.blackPiece or grid.squares[y][x] == grid.blackKing or grid.squares[y][x] == grid.whiteKing:
+    if grid.squares[y][x].player == -1 or grid.squares[y][x].king != 0:
         # set i to row below
         i = y + 1
         # look in column before and column after
@@ -256,7 +256,7 @@ def validPlaces(grid, x, y):
             # check if square is empty
             if grid.testAvailable(i, x+j):
                 # set grid space to be a valid space
-                grid.squares[i][x+j] = "o"
+                grid.squares[i][x+j] = grid.validSpace
                 # add grid space to valid spaces
                 grid.validPlaces.update([(i, x + j)])
 
@@ -356,7 +356,7 @@ def play(grid):
                     grid.printGrid()
                 else:
                     # check that there is a valid piece in that square
-                    if grid.squares[y][x] == piece or grid.squares[y][x] == king:
+                    if grid.squares[y][x].player == grid.player:
                         # call valid places method
                         validPlaces(grid, x, y)
                         # check that there where valid spaces

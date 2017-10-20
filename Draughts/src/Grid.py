@@ -12,12 +12,14 @@ class Grid:
 
     # grid constructor
     def __init__(self, width, height, rows):
-
+        # set grid dimensions
         self.rows = rows
         self.width = width
         self.setWidth(width)
         self.height = height
         self.setHeight(height)
+
+        # set piece information
         self.pieceNo = int((self.width/2) * self.rows)
         self.blackPiece = "b"
         self.whitePiece = "w"
@@ -26,9 +28,15 @@ class Grid:
         self.validSpace = "o"
         self.whiteSpace = " "
         self.blackSpace = " "
+
+        # set current player
         self.player = 1
+
+        # create an array for pieces
         self.pieces = []
+        # create a set of usable squares
         self.usableSquares = set([])
+        # create a set of valid spaces
         self.validPlaces = set([])
         # Create list of grid squares variable
         self.squares = []
@@ -94,13 +102,13 @@ class Grid:
                     self.squares[i].append(self.whiteSpace)
                 # check if square should  contain black piece
                 elif i < self.rows:
-                    self.squares[i].append(self.blackPiece)
-                    self.pieces.append(Piece([i, j], self.blackPiece))
+                    self.pieces.append(Piece([i, j], self.blackPiece, self.blackKing, -1))
+                    self.squares[i].append(self.pieces[len(self.pieces) - 1])
                     self.usableSquares.update([(i, j)])
                 # check if square should contain white piece
                 elif i >= self.height - self.rows:
-                    self.squares[i].append(self.whitePiece)
-                    self.pieces.append(Piece([i, j], self.whitePiece))
+                    self.pieces.append(Piece([i, j], self.whitePiece, self.whiteKing, 1))
+                    self.squares[i].append(self.pieces[len(self.pieces) - 1])
                     self.usableSquares.update([(i, j)])
                 # else square is black
                 else:
@@ -164,40 +172,23 @@ class Grid:
 
     def completeMove(self, start1, start2, end1, end2):
         self.validPlaces.remove((end1, end2))
+        testpiece = self.squares[start1][start2]
         # check if should become king
-        if end1 == 0 and self.squares[start1][start2] == self.whitePiece:
-            self.squares[end1][end2] = self.whiteKing
-        elif end1 == self.height - 1 and self.squares[start1][start2] == self.blackPiece:
-            self.squares[end1][end2] = self.blackKing
-        else:
-            self.squares[end1][end2] = self.squares[start1][start2]
+        if end1 == 0 and testpiece.player == 1 and testpiece.king == 0:
+            testpiece.king = 1
+        elif end1 == self.height - 1 and testpiece.player == -1 and testpiece.king == 0:
+            testpiece.king = 1
+        self.squares[end1][end2] = testpiece
         self.squares[start1][start2] = self.blackSpace
         self.emptyValids()
 
-    def opposites(self, piece):
-        if piece == self.whitePiece or piece == self.whiteKing:
-            return self.blackPiece
-        if piece == self.blackPiece or piece == self.blackKing:
-            return self.whitePiece
-
-    def kings(self, piece):
-        if piece == self.whitePiece or piece == self.whiteKing:
-            return self.whiteKing
-        if piece == self.blackPiece or piece == self.blackKing:
-            return self.blackKing
-
     def takes(self, piece, x, y):
-        i = y + 1
-        k = 1
-        if self.whiteKing == self.kings(piece):
-            i = y - 1
-            k = -1
+        i = y - piece.player
+        k = - piece.player
 
         for j in range(-1, 2, 2):
             if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
-                print(self.kings(self.opposites(piece)))
-                print(self.kings(self.squares[i][x+j]))
-                if self.kings(self.opposites(piece)) == self.kings(self.squares[i][x+j]):
+                if -piece.player == self.squares[i][x+j].player:
                     if self.testAvailable(i + k, x+j+j):
                         # set grid space to be a valid space
                         self.squares[i + k][x+j + j] = self.validSpace
