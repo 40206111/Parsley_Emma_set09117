@@ -46,6 +46,7 @@ def boardSets(grid, change):
         if theIn == '1':
             while not done:
                 try:
+                    print("WARNING: changing this setting will reset the game")
                     print("Board width must be even and at least 4 and at most 26")
                     width = input("Input board width (Type Cancel to cancel): ")
                     if not width.lower() == "cancel":
@@ -64,6 +65,7 @@ def boardSets(grid, change):
         elif theIn == '2':
             while not done:
                 try:
+                    print ("WARNING: changing this setting will reset the game")
                     rows = input("Input number of rows (Type Cancel to cancel): ")
                     if not rows.lower() == "cancel":
                         grid.setRows(int(rows))
@@ -75,6 +77,7 @@ def boardSets(grid, change):
 
         # White space setting
         elif theIn == '3':
+            print("WARNING: changing this setting will reset the game")
             done = True
             space = input("Input the character you want to represent white spaces\nOnly the first character you type will be used: ")
             try:
@@ -85,6 +88,7 @@ def boardSets(grid, change):
             boardSets(grid, change)
         # Black space setting
         elif theIn == '4':
+            print("WARNING: changing this setting will reset the game")
             done = True
             space = input("Input the character you want to represent black spaces\nOnly the first character you type will be used: ")
             try:
@@ -99,13 +103,11 @@ def boardSets(grid, change):
             space = input("Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
             try:
                 grid.validSpace = space[0]
-                change = True
             except:
                 print("ERROR: you did not input anything")
             boardSets(grid, change)
         # back to settings
         elif theIn == '6':
-            print(change)
             if change:
                 grid.createGrid()
             done = True
@@ -113,7 +115,7 @@ def boardSets(grid, change):
 
 
 # settings for pieces
-def pieceSets(grid, change):
+def pieceSets(grid):
     print("\nPiece Settings:\n")
     print("1. White pieces: ", end=grid.whitePiece)
     print("\n2. Black pieces: ", end=grid.blackPiece)
@@ -132,27 +134,27 @@ def pieceSets(grid, change):
             piece = input("Input the character you want to represent white pieces\nOnly the first character you type will be used: ")
             try:
                 grid.whitePiece = piece[0]
-                change = True
+                grid.resetGrid()
             except:
                 print("ERROR: you did not input anything")
-            pieceSets(grid, change)
+            pieceSets(grid)
         # black piece setting
         elif theIn == '2':
             done = True
             piece = input("Input the character you want to represent black pieces\nOnly the first character you type will be used: ")
             try:
                 grid.blackPiece = piece[0]
-                change = True
+                grid.resetGrid()
             except:
                 print("ERROR: you did not input anything")
-            pieceSets(grid, change)
+            pieceSets(grid)
         # white king setting
         elif theIn == '3':
             done = True
             piece = input("Input the character you want to represent white kings\nOnly the first character you type will be used: ")
             try:
                 grid.whiteKing = piece[0]
-                change = True
+                grid.resetGrid()
             except:
                 print("ERROR: you did not input anything")
             pieceSets(grid)
@@ -162,24 +164,21 @@ def pieceSets(grid, change):
             piece = input("Input the character you want to represent black kings\nOnly the first character you type will be used: ")
             try:
                 grid.blackKing = piece[0]
-                change = True
+                grid.resetGrid()
             except:
                 print("ERROR: you did not input anything")
-            pieceSets(grid, change)
+            pieceSets(grid)
         elif theIn == '5':
             done = True
-            if change:
-                grid.createGrid()
             settings(grid)
 
 
 # general settings
 def settings(grid):
     print("\nSettings:\n")
-    print("WARNING: Changing any settings will reset your game")
     print("1. See Board Settings")
     print("2. See Piece settings")
-    print("3. Two Player: On")
+    print("3. Two Player: On  (Changing this setting will reset your game)")
     print("4. Back")
 
     done = False
@@ -193,7 +192,7 @@ def settings(grid):
         # piece settings
         elif theIn == '2':
             done = True
-            pieceSets(grid, False)
+            pieceSets(grid)
         # toggle 2 players
         elif theIn == '3':
             done = True

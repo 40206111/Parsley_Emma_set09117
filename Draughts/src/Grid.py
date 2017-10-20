@@ -189,3 +189,12 @@ class Grid:
                         # add grid space to valid spaces
                         self.validPlaces.update([(i + k, x + j + j)])
                         self.takes(piece, i+k, x+j+j)
+
+    def resetGrid(self):
+        for p in self.pieces:
+            if p.player == 1:
+                p.col = self.whitePiece
+                p.kingLetter = self.whiteKing
+            else:
+                p.col = self.blackPiece
+                p.kingLetter = self.blackKing
