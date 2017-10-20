@@ -31,6 +31,8 @@ class Grid:
 
         # set current player
         self.player = 1
+        # set current turn
+        self.turn = 0
 
         # create an array for pieces
         self.pieces = []
@@ -154,7 +156,7 @@ class Grid:
             return self.blackKing
 
     def testAvailable(self, i, j):
-        if (i, j) in self.usableSquares and (self.squares[i][j] == " "):
+        if (i, j) in self.usableSquares and (self.squares[i][j] == self.blackSpace):
             return True
         else:
             return False
@@ -169,26 +171,29 @@ class Grid:
         testpiece = self.squares[start1][start2]
         # check if should become king
         if end1 == 0 and testpiece.player == 1 and testpiece.king == 0:
-            testpiece.king = 1
+            testpiece.king = self.turn
         elif end1 == self.height - 1 and testpiece.player == -1 and testpiece.king == 0:
-            testpiece.king = 1
+            testpiece.king = self.turn
         self.squares[end1][end2] = testpiece
         self.squares[start1][start2] = self.blackSpace
         self.emptyValids()
+        self.turn += 1
 
     def takes(self, piece, x, y):
         i = y - piece.player
         k = - piece.player
-
         for j in range(-1, 2, 2):
             if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
-                if -piece.player == self.squares[i][x+j].player:
-                    if self.testAvailable(i + k, x+j+j):
-                        # set grid space to be a valid space
-                        self.squares[i + k][x+j + j] = self.validSpace
-                        # add grid space to valid spaces
-                        self.validPlaces.update([(i + k, x + j + j)])
-                        self.takes(piece, i+k, x+j+j)
+                try:
+                    if -piece.player == self.squares[i][x+j].player:
+                        if self.testAvailable(i + k, x+j+j):
+                            # set grid space to be a valid space
+                            self.squares[i + k][x+j + j] = self.validSpace
+                            # add grid space to valid spaces
+                            self.validPlaces.update([(i + k, x + j + j)])
+                            self.takes(piece, i+k, x+j+j)
+                except:
+                    pass
 
     def resetGrid(self):
         for p in self.pieces:

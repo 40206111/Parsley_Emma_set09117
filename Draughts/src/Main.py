@@ -310,12 +310,13 @@ def move(grid, starty, startx):
 
 # play method
 def play(grid):
+    if grid.turn != 0:
+        grid.takes(grid.squares[5][1], 1, 5)
     print()
     # print grid
     grid.printGrid()
     done = False
     while not done:
-
         print("\nType \"Quit\" to quit")
         theIn = input("Input coordinates of piece you would like to move: ")
         try:
