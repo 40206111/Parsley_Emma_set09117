@@ -270,12 +270,8 @@ def move(grid, starty, startx):
         print("Input the coordinates of the space you would like to move to \n(type cancel to select other piece, valid spaces shown with  ", end=grid.validSpace)
         theIn = input("): ")
         try:
-            # check if player wanted to quit
-            if theIn.lower() == "quit":
-                done = True
-                # go back to menu
-                menu(grid)
-            elif theIn.lower() == "cancel":
+            # check if player wanted to cancel
+            if theIn.lower() == "cancel":
                 done = True
             else:
                 x = 1000
