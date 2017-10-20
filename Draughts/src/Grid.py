@@ -147,12 +147,6 @@ class Grid:
         # new line
         print()
 
-    def getPieceType(self):
-        if self.player == 1:
-            return self.whitePiece
-        else:
-            return self.blackPiece
-
     def getKingType(self):
         if self.player == 1:
             return self.whiteKing

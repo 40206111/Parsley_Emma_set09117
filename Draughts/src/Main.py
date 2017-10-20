@@ -320,9 +320,6 @@ def play(grid):
     grid.printGrid()
     done = False
     while not done:
-        # get piece type for current player
-        piece = grid.getPieceType()
-        king = grid.getKingType()
 
         print("\nType \"Quit\" to quit")
         theIn = input("Input coordinates of piece you would like to move: ")
