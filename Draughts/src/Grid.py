@@ -34,12 +34,15 @@ class Grid:
         # set current turn
         self.turn = 0
 
-        # create an array for pieces
-        self.pieces = []
+        # create array for pieces
+        self.whitePieces = []
+        self.blackPieces = []
         # create a set of usable squares
         self.usableSquares = set([])
         # create a set of valid spaces
         self.validPlaces = set([])
+
+        self.ForcedPieces = set([])
         # Create list of grid squares variable
         self.squares = []
         # Create Grid
@@ -89,7 +92,8 @@ class Grid:
         self.player = 1
         # empty squares list
         self.squares = []
-        self.pieces = []
+        self.whitePieces = []
+        self.blackPieces = []
         self.usableSquares = set([])
 
         # Create amount of rows needed
@@ -104,13 +108,13 @@ class Grid:
                     self.squares[i].append(self.whiteSpace)
                 # check if square should  contain black piece
                 elif i < self.rows:
-                    self.pieces.append(Piece([i, j], self.blackPiece, self.blackKing, -1))
-                    self.squares[i].append(self.pieces[len(self.pieces) - 1])
+                    self.blackPieces.append(Piece((i, j), self.blackPiece, self.blackKing, -1))
+                    self.squares[i].append(self.blackPieces[len(self.blackPieces) - 1])
                     self.usableSquares.update([(i, j)])
                 # check if square should contain white piece
                 elif i >= self.height - self.rows:
-                    self.pieces.append(Piece([i, j], self.whitePiece, self.whiteKing, 1))
-                    self.squares[i].append(self.pieces[len(self.pieces) - 1])
+                    self.whitePieces.append(Piece((i, j), self.whitePiece, self.whiteKing, 1))
+                    self.squares[i].append(self.whitePieces[len(self.whitePieces) - 1])
                     self.usableSquares.update([(i, j)])
                 # else square is black
                 else:
@@ -175,13 +179,34 @@ class Grid:
         elif end1 == self.height - 1 and testpiece.player == -1 and testpiece.king == 0:
             testpiece.king = self.turn
         self.squares[end1][end2] = testpiece
+        self.squares[end1][end2].xy = (end1, end2)
         self.squares[start1][start2] = self.blackSpace
         self.emptyValids()
         self.turn += 1
 
+    def canTake(self, piece, x, y):
+        i = y - piece.player
+        k = - piece.player
+        i2 = y + piece.player
+        k2 = piece.player
+        for j in range(-1, 2, 2):
+            if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
+                try:
+                    if -piece.player == self.squares[i][x+j].player:
+                        if self.testAvailable(i + k, x+j+j):
+                            # set grid space to be a valid space
+                            self.ForcedPieces.add(piece.xy)
+                        if -piece.player == self.squares[i2][x+j].player and piece.king:
+                            # set grid space to be a valid space
+                            self.ForcedPieces.add(piece.xy)
+                except:
+                    pass
+
     def takes(self, piece, x, y):
         i = y - piece.player
         k = - piece.player
+        i2 = y + piece.player
+        k2 = piece.player
         for j in range(-1, 2, 2):
             if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
                 try:
@@ -192,6 +217,12 @@ class Grid:
                             # add grid space to valid spaces
                             self.validPlaces.update([(i + k, x + j + j)])
                             self.takes(piece, i+k, x+j+j)
+                    if -piece.player == self.squares[i2][x+j].player and piece.king:
+                            # set grid space to be a valid space
+                            self.squares[i2 + k2][x+j + j] = self.validSpace
+                            # add grid space to valid spaces
+                            self.validPlaces.update([(i2 + k2, x + j + j)])
+                            self.takes(piece, i2+k2, x+j+j)
                 except:
                     pass
 
