@@ -34,6 +34,7 @@ class Grid:
         # set current turn
         self.turn = 0
 
+        self.more = False
         # create array for pieces
         self.whitePieces = []
         self.blackPieces = []
@@ -43,6 +44,7 @@ class Grid:
         self.validPlaces = set([])
 
         self.ForcedPieces = set([])
+        self.DoubleTakes = set([])
         # Create list of grid squares variable
         self.squares = []
         # Create Grid
@@ -170,8 +172,8 @@ class Grid:
             self.squares[v[0]][v[1]] = " "
         self.validPlaces.clear()
 
-    def completeMove(self, start1, start2, end1, end2):
-        self.validPlaces.remove((end1, end2))
+    def normalMove(self, start1, start2, end1, end2):
+        self.emptyValids()
         testpiece = self.squares[start1][start2]
         # check if should become king
         if end1 == 0 and testpiece.player == 1 and testpiece.king == 0:
@@ -181,8 +183,24 @@ class Grid:
         self.squares[end1][end2] = testpiece
         self.squares[end1][end2].xy = (end1, end2)
         self.squares[start1][start2] = self.blackSpace
-        self.emptyValids()
-        self.turn += 1
+
+    def completeMove(self, start1, start2, end1, end2):
+        if self.ForcedPieces:
+            self.completeTakes(start1, start2, end1, end2)
+            if not self.ForcedPieces:
+                self.canTake(self.squares[end1][end2], end1, end2)
+                self.takes(self.squares[end1][end2], end1, end2)
+                if self.validPlaces:
+                    self.more = True
+                    return False
+                else:
+                    self.more = False
+            else:
+                self.more = False
+
+        else:
+            self.normalMove(start1, start2, end1, end2)
+        return True
 
     def canTake(self, piece, x, y):
         i = y - piece.player
@@ -195,10 +213,20 @@ class Grid:
                     if -piece.player == self.squares[i][x+j].player:
                         if self.testAvailable(i + k, x+j+j):
                             # set grid space to be a valid space
-                            self.ForcedPieces.add(piece.xy)
-                        if -piece.player == self.squares[i2][x+j].player and piece.king:
+                            if (i, x+j) in self.ForcedPieces:
+                                self.DoubleTakes.add((i, x+j))
+                            else:
+                                self.ForcedPieces.add(piece.xy)
+                except:
+                    pass
+                try:
+                    if -piece.player == self.squares[i2][x+j].player and piece.king:
+                        if self.testAvailable(i2 + k2, x+j+j):
                             # set grid space to be a valid space
-                            self.ForcedPieces.add(piece.xy)
+                            if (i2, x+j) in self.ForcedPieces:
+                                self.DoubleTakes.add((i2, x+j))
+                            else:
+                                self.ForcedPieces.add(piece.xy)
                 except:
                     pass
 
@@ -217,6 +245,9 @@ class Grid:
                             # add grid space to valid spaces
                             self.validPlaces.update([(i + k, x + j + j)])
                             self.takes(piece, i+k, x+j+j)
+                except:
+                    pass
+                try:
                     if -piece.player == self.squares[i2][x+j].player and piece.king:
                             # set grid space to be a valid space
                             self.squares[i2 + k2][x+j + j] = self.validSpace
@@ -225,6 +256,59 @@ class Grid:
                             self.takes(piece, i2+k2, x+j+j)
                 except:
                     pass
+
+    def completeTakes(self, start1, start2, end1, end2):
+        if end1 in range(start1 - 2, start1 + 3) and end2 in range(start2 - 2, start2 + 3):
+            y = end1 + (start1 - end1)/2
+            x = end2 + (start2 - end2)/2
+            y = int(y)
+            x = int(x)
+            if self.squares[start1][start2].player == 1:
+                self.blackPieces.remove(self.squares[y][x])
+            else:
+                self.whitePieces.remove(self.squares[y][x])
+            self.squares[y][x] = self.blackSpace
+            self.normalMove(start1, start2, end1, end2)
+            self.ForcedPieces.clear()
+        else:
+            if (end1, end2) not in self.DoubleTakes:
+                removePieces = self.takeRoute(self.squares[start1][start2], start1, start2, end1, end2)
+                for p in removePieces:
+                    self.squares[p.xy[0]][p.xy[1]] = self.blackSpace
+                    if self.squares[start1][start2].player == 1:
+                        self.blackPieces.remove(p)
+                    else:
+                        self.whitePieces.remove(p)
+                    self.printGrid()
+                if removePieces:
+                    self.normalMove(start1, start2, end1, end2)
+                    self.ForcedPieces.clear()
+                    self.DoubleTakes.clear()
+
+    def takeRoute(self, piece, start1, start2, end1, end2):
+        output = []
+        for i in range(-1, 2, 2):
+            for j in range(-1, 2, 2):
+                if start2 + j + j > 0 or start2 + j + j < self.width or start1 + i + i > 0 or start1 + i + i < self.height:
+                    try:
+                        if -piece.player == self.squares[start1 + i][start2 + j].player and (start1 + i, start2 + j) not in output:
+                            if (start1 + i + i, start2 + j + j) in self.validPlaces:
+                                if (start1 + i + i, start2 + j + j) not in self.DoubleTakes:
+                                    if start1 + i + i == end1 and start2 + j + j == end2:
+                                        return tuple(start1 + i + j, start2 + j + j)
+                                    output.append(start1 + i, start2 + j)
+                                    output.append(self.takeRoute(piece, start1 + i + i, start2 + j + j, end1, end2))
+                                    if output[len(output) - 1] == (end1, end2):
+                                        output[len(output - 1)] = ((end1 + ((start1 + i + i) - end1)/2), (end2 + ((start2 + j + j) - end2)/2))
+                                        return output
+                                    else:
+                                        output.remove(output[len(output) - 1])
+
+                        return []
+
+                    except:
+                        pass
+        return []
 
     def resetGrid(self):
         for p in self.pieces:

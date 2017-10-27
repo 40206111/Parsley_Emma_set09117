@@ -260,53 +260,61 @@ def validPlaces(grid, x, y):
                 grid.validPlaces.update([(i, x + j)])
 
 
+def setInput(theIn):
+    if 65 <= ord(theIn[len(theIn) - 1].upper()) <= 90:
+        # set x to int
+        x = ord(theIn[len(theIn) - 1].upper())
+        x -= ord('A')
+
+        theIn = theIn[:-1]
+        # set y to given int minus 1
+        y = int(theIn) - 1
+    elif 65 <= ord(theIn[0].upper()) <= 90:
+        # set x to int
+        x = ord(theIn[0].upper())
+        x -= ord('A')
+
+        theIn = theIn[1:]
+        # set y to given int minus 1
+        y = int(theIn) - 1
+    return y, x
+
+
 # move method
 def move(grid, starty, startx):
-    print()
-    grid.printGrid()
     done = False
     # do while not done
     while not done:
+        print()
+        grid.printGrid()
+        print()
         print("Input the coordinates of the space you would like to move to \n(type cancel to select other piece, valid spaces shown with  ", end=grid.validSpace)
         theIn = input("): ")
-        try:
-            # check if player wanted to cancel
-            if theIn.lower() == "cancel":
-                done = True
-            else:
-                x = 1000
-                y = 1000
-                if 65 <= ord(theIn[len(theIn)-1].upper()) <= 90:
-                    # set x to int
-                    x = ord(theIn[len(theIn)-1].upper())
-                    x -= ord('A')
-
-                    theIn = theIn[:-1]
-                    # set y to given int minus 1
-                    y = int(theIn) - 1
-                elif 65 <= ord(theIn[0].upper()) <= 90:
-                    # set x to int
-                    x = ord(theIn[0].upper())
-                    x -= ord('A')
-
-                    theIn = theIn[1:]
-                    # set y to given int minus 1
-                    y = int(theIn) - 1
-
+        # check if player wanted to cancel
+        if theIn.lower() == "cancel":
+            done = True
+        elif theIn.lower() == "no" and grid.more:
+            grid.more = False
+            grid.emptyValids()
+            grid.ForcedPieces.clear()
+            grid.DoubleTakes.clear()
+        else:
+            try:
+                y, x = setInput(theIn)
                 # check that move is valid
                 if (y, x) in grid.validPlaces:
                     # move piece in grid
-                    grid.completeMove(starty, startx, y, x)
-                    # print the grid again
-                    grid.printGrid()
-                    done = True
+                     if grid.completeMove(starty, startx, y, x):
+                        if grid.ForcedPieces:
+                            print("ERROR: there are multiple ways to get to this point please enter your route step by step")
+                        else:
+                            done = True
+                        # print the grid again
                 else:
                     # give feedback for invalid input
                     print("\nERROR: invalid input\n")
-                    grid.printGrid()
-        except:
-            print("\nERROR: invalid input\n")
-            grid.printGrid()
+            except:
+                print("\nERROR: invalid input\n")
 
 
 def checkForTakes(grid, pieces):
@@ -315,88 +323,59 @@ def checkForTakes(grid, pieces):
 
 
 def forceTakeMove(grid):
+    print()
+    grid.printGrid()
+    print()
     print("\nType \"Quit\" to quit")
     print("FORCE TAKE:\nYou are able to take at least one of your enemies pieces.\nPlease input one of the following:")
     for f in grid.ForcedPieces:
         print(chr(65 + f[1]), end=str(f[0] + 1))
         print()
     theIn = input("Input: ")
-    try:
-        # check if player wants to quit
-        if theIn.lower() == "quit":
-            menu(grid)
-            return True
-        else:
-            x = 1000
-            y = 1000
-            if 65 <= ord(theIn[len(theIn)-1].upper()) <= 90:
-                # set x to int
-                x = ord(theIn[len(theIn)-1].upper())
-                x -= ord('A')
-
-                theIn = theIn[:-1]
-                # set y to given int minus 1
-                y = int(theIn) - 1
-            elif 65 <= ord(theIn[0].upper()) <= 90:
-                # set x to int
-                x = ord(theIn[0].upper())
-                x -= ord('A')
-
-                theIn = theIn[1:]
-                # set y to given int minus 1
-                y = int(theIn) - 1
+    # check if player wants to quit
+    if theIn.lower() == "quit":
+        menu(grid)
+        return True
+    else:
+        try:
+            y, x = setInput(theIn)
             # check that there is a valid piece in that square
-            if (y, x) in grid.ForcedPieces:
-                # call valid places method
+            if (y, x) not in grid.ForcedPieces:
+                print("\nERROR: invalid input\n")
+            else:
                 grid.takes(grid.squares[y][x], x, y)
                 # check that there where valid spaces
                 if not grid.validPlaces:
                     print("\nERROR: No valid movements\n")
+                    grid.printGrid()
                 else:
-                    # print gid and move piece
+                    # move piece
                     move(grid, y, x)
                     # check if piece was moved
-                    if grid.validPlaces:
+                    if grid.validPlaces or grid.ForcedPieces:
                         grid.emptyValids()
-                        print("ERROR: An unknown error occurred while trying to move this piece")
-                    else:
                         grid.ForcedPieces.clear()
+                    else:
                         return False
-            else:
-                print("\nERROR: your piece is not on this square\n")
-                grid.printGrid()
-    except:
-        print("\nERROR: invalid input\n")
+        except:
+            print("\nERROR: Invalid input\n")
+            return forceTakeMove(grid)
     return False
 
 
 def choosePiece(grid):
+    print()
+    grid.printGrid()
+    print()
     print("\nType \"Quit\" to quit")
     theIn = input("Input coordinates of piece you would like to move: ")
-    try:
-        # check if player wants to quit
-        if theIn.lower() == "quit":
-            menu(grid)
-            return True
-        else:
-            x = 1000
-            y = 1000
-            if 65 <= ord(theIn[len(theIn)-1].upper()) <= 90:
-                # set x to int
-                x = ord(theIn[len(theIn)-1].upper())
-                x -= ord('A')
-
-                theIn = theIn[:-1]
-                # set y to given int minus 1
-                y = int(theIn) - 1
-            elif 65 <= ord(theIn[0].upper()) <= 90:
-                # set x to int
-                x = ord(theIn[0].upper())
-                x -= ord('A')
-
-                theIn = theIn[1:]
-                # set y to given int minus 1
-                y = int(theIn) - 1
+    # check if player wants to quit
+    if theIn.lower() == "quit":
+        menu(grid)
+        return True
+    else:
+        try:
+            y, x = setInput(theIn)
             # check that values are within grid boundaries
             if x < 0 or x > grid.width or y < 0 or y > grid.height:
                 print("\nERROR: invalid input\n")
@@ -419,8 +398,9 @@ def choosePiece(grid):
                             return False
                 else:
                     print("\nERROR: your piece is not on this square\n")
-    except:
-        print("\nERROR: invalid input\n")
+        except:
+            print("\nERROR: invalid input\n")
+            return choosePiece(grid)
     return False
 
 
@@ -437,22 +417,32 @@ def play(grid):
         else:
             checkForTakes(grid, grid.blackPieces)
 
-        # print grid
-        grid.printGrid()
-
         if not grid.ForcedPieces:
             done = choosePiece(grid)
         else:
             done = forceTakeMove(grid)
 
-        # change player
-        grid.player *= -1
-        if grid.player == 1:
-            print("\nPLAYER 1's TURN (" + grid.whitePiece + ")\n")
+        grid.turn += 1
+
+        if len(grid.blackPieces) == 0:
+            print()
+            grid.printGrid()
+            print("\nPLAYER 1 WINS!\n")
+            done = True
+            main()
+        elif len(grid.whitePieces) == 0:
+            print()
+            grid.printGrid()
+            print("\nPLAYER 2 WINS\n")
+            done = True
+            main()
         else:
-            print("\nPLAYER 2's TURN (" + grid.blackPiece + ")\n")
-
-
+            # change player
+            grid.player *= -1
+            if grid.player == 1:
+                print("\nPLAYER 1's TURN (" + grid.whitePiece + ")\n")
+            else:
+                print("\nPLAYER 2's TURN (" + grid.blackPiece + ")\n")
 
 
 # define main
