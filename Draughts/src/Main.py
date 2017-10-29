@@ -463,15 +463,6 @@ def main():
     grid = Grid(8, 8, 1)
     grid.setRows(1)
     grid.createGrid()
-    # black
-    # grid.normalMove(0, 6, 1, 7)
-    # grid.normalMove(7, 1, 6, 2)
-    # grid.normalMove(7, 3, 4, 4)
-    # grid.normalMove(7, 5, 2, 6)
-    # white
-    grid.normalMove(0, 0, 6, 2)
-    grid.normalMove(0, 2, 4, 4)
-    grid.normalMove(0, 4, 2, 6)
     # print rules
     rules(grid)
     # go to menu

@@ -11,11 +11,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-255">
-              <caret line="319" column="38" lean-forward="true" selection-start-line="319" selection-start-column="38" selection-end-line="319" selection-end-column="38" />
+            <state relative-caret-position="200">
+              <caret line="464" column="21" lean-forward="false" selection-start-line="464" selection-start-column="21" selection-end-line="464" selection-end-column="21" />
               <folding>
                 <element signature="e#10#47#0" expanded="true" />
                 <element signature="e#163#911#0" expanded="false" />
@@ -24,11 +24,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Grid.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Grid.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Grid.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1028">
-              <caret line="308" column="5" lean-forward="true" selection-start-line="308" selection-start-column="5" selection-end-line="308" selection-end-column="5" />
+            <state relative-caret-position="399">
+              <caret line="271" column="17" lean-forward="false" selection-start-line="271" selection-start-column="17" selection-end-line="271" selection-end-column="17" />
               <folding>
                 <element signature="e#10#47#0" expanded="true" />
               </folding>
@@ -74,8 +74,8 @@
         <option value="$PROJECT_DIR$/Grid.py" />
         <option value="$PROJECT_DIR$/../../algorithms-and-data-structures/Dictionary.py" />
         <option value="$PROJECT_DIR$/src/Piece.py" />
-        <option value="$PROJECT_DIR$/src/Main.py" />
         <option value="$PROJECT_DIR$/src/Grid.py" />
+        <option value="$PROJECT_DIR$/src/Main.py" />
       </list>
     </option>
   </component>
@@ -715,23 +715,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.py">
+    <entry file="file://$PROJECT_DIR$/src/Grid.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-255">
-          <caret line="319" column="38" lean-forward="true" selection-start-line="319" selection-start-column="38" selection-end-line="319" selection-end-column="38" />
+        <state relative-caret-position="399">
+          <caret line="271" column="17" lean-forward="false" selection-start-line="271" selection-start-column="17" selection-end-line="271" selection-end-column="17" />
           <folding>
             <element signature="e#10#47#0" expanded="true" />
-            <element signature="e#163#911#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Grid.py">
+    <entry file="file://$PROJECT_DIR$/src/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1028">
-          <caret line="308" column="5" lean-forward="true" selection-start-line="308" selection-start-column="5" selection-end-line="308" selection-end-column="5" />
+        <state relative-caret-position="200">
+          <caret line="464" column="21" lean-forward="false" selection-start-line="464" selection-start-column="21" selection-end-line="464" selection-end-column="21" />
           <folding>
             <element signature="e#10#47#0" expanded="true" />
+            <element signature="e#163#911#0" expanded="false" />
           </folding>
         </state>
       </provider>
