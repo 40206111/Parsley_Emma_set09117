@@ -292,22 +292,26 @@ class Grid:
                 self.whitePieces.remove(self.squares[y][x])
             self.squares[y][x] = self.blackSpace
             self.normalMove(start1, start2, end1, end2)
-            print("manahmahnah")
             self.ForcedPieces.clear()
             self.DoubleTakes.clear()
         else:
             if (end1, end2) not in self.DoubleTakes:
                 removePieces = self.takeRoute(self.squares[start1][start2], start1, start2, end1, end2)
                 print(removePieces)
+                a = start1
+                b = start2
                 for p in removePieces:
-                    self.squares[p.xy[0]][p.xy[1]] = self.blackSpace
-                    if self.squares[start1][start2].player == 1:
-                        self.blackPieces.remove(p)
+                    tempPiece = self.squares[p[0]][p[1]]
+                    self.squares[p[0]][p[1]] = self.blackSpace
+                    if self.squares[a][b].player == 1:
+                        self.blackPieces.remove(tempPiece)
                     else:
-                        self.whitePieces.remove(p)
+                        self.whitePieces.remove(tempPiece)
+                    self.normalMove(a, b, p[0]+(p[0] - a), p[1] + (p[1] - b))
+                    a = p[0]+(p[0] - a)
+                    b = p[1] + (p[1] - b)
                     self.printGrid()
                 if removePieces:
-                    self.normalMove(start1, start2, end1, end2)
                     self.ForcedPieces.clear()
                     self.DoubleTakes.clear()
 
@@ -322,12 +326,15 @@ class Grid:
                     try:
                         if -piece.player == self.squares[start1 + i][start2 + j].player:
                             if (start1 + i + i, start2 + j + j) in self.validPlaces:
-                                output.append((start1 + i, start2 + j))
-                                output = output + self.takeRoute(piece, start1 + i + i, start2 + j + j, end1, end2)
-                                if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
-                                    return output
+                                if (start1 + i + i, start2 + j + j) in self.DoubleTakes:
+                                    return []
                                 else:
-                                    output.remove(output[len(output) - 1])
+                                    output.append((start1 + i, start2 + j))
+                                    output = output + self.takeRoute(piece, start1 + i + i, start2 + j + j, end1, end2)
+                                    if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
+                                        return output
+                                    else:
+                                        output.remove(output[len(output) - 1])
                     except:
                         pass
         return[]
