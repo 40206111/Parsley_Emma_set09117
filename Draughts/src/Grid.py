@@ -12,6 +12,7 @@ class Grid:
 
     # grid constructor
     def __init__(self, width, height, rows):
+        self.debug = 0
         # set grid dimensions
         self.rows = rows
         self.width = width
@@ -187,73 +188,96 @@ class Grid:
     def completeMove(self, start1, start2, end1, end2):
         if self.ForcedPieces:
             self.completeTakes(start1, start2, end1, end2)
-            if not self.ForcedPieces:
-                self.canTake(self.squares[end1][end2], end1, end2)
-                self.takes(self.squares[end1][end2], end1, end2)
-                if self.validPlaces:
+            if self.ForcedPieces:
+                return False
+            else:
+                self.canTake(self.squares[end1][end2], end2, end1)
+                if self.ForcedPieces:
+                    self.takes(self.squares[end1][end2], end2, end1)
                     self.more = True
-                    return False
                 else:
                     self.more = False
-            else:
-                self.more = False
-
         else:
             self.normalMove(start1, start2, end1, end2)
         return True
 
     def canTake(self, piece, x, y):
+        # + 1 in direction piece is allowed to move
         i = y - piece.player
+        # + 2 in direction piece is allowed to move
         k = - piece.player
+        # + 1 in opposite direction from standard movement
         i2 = y + piece.player
+        # + 2 in opposite direction from standard movement
         k2 = piece.player
+        # for square before and square after
         for j in range(-1, 2, 2):
-            if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
+            # if space 2 away is within grid
+            if x + j + j in range(0, self.width) or i + k in range(0, self.height):
+                # try to check if there is a piece of opposite colour one away
                 try:
                     if -piece.player == self.squares[i][x+j].player:
+                        # test if space 2 away is empty
                         if self.testAvailable(i + k, x+j+j):
-                            # set grid space to be a valid space
-                            if (i, x+j) in self.ForcedPieces:
-                                self.DoubleTakes.add((i, x+j))
-                            else:
+                            # add to forced pieces
                                 self.ForcedPieces.add(piece.xy)
                 except:
                     pass
+                # try to check if there is a piece of opposite colour one away in non standard direction and piece is king
                 try:
-                    if -piece.player == self.squares[i2][x+j].player and piece.king:
+                    if piece.king and -piece.player == self.squares[i2][x+j].player:
+                        # test if space 2 away is empty
                         if self.testAvailable(i2 + k2, x+j+j):
-                            # set grid space to be a valid space
-                            if (i2, x+j) in self.ForcedPieces:
-                                self.DoubleTakes.add((i2, x+j))
-                            else:
+                            # add to forced pieces
                                 self.ForcedPieces.add(piece.xy)
                 except:
                     pass
 
     def takes(self, piece, x, y):
+        # + 1 in direction piece is allowed to move
         i = y - piece.player
+        # + 2 in direction piece is allowed to move
         k = - piece.player
+        # + 1 in opposite direction from standard movement
         i2 = y + piece.player
+        # + 2 in opposite direction from standard movement
         k2 = piece.player
+        # for square one before and square one after
         for j in range(-1, 2, 2):
-            if x + j + j > 0 or x + j + j < self.width or i + k > 0 or i + k < self.height:
+            # check if square + 2 within grid
+            if x + j + j in range(0, self.width) or i + k in range(0, self.height):
+                # try to check if there is a piece of opposite colour one away
                 try:
                     if -piece.player == self.squares[i][x+j].player:
+                        # test if square 2 away is empty
                         if self.testAvailable(i + k, x+j+j):
                             # set grid space to be a valid space
                             self.squares[i + k][x+j + j] = self.validSpace
-                            # add grid space to valid spaces
-                            self.validPlaces.update([(i + k, x + j + j)])
-                            self.takes(piece, i+k, x+j+j)
+                            # check if space already in valid spaces
+                            if (i+k, x+j+j) in self.validPlaces:
+                                # add space to double takes
+                                self.DoubleTakes.add((i+k, x+j+j))
+                            else:
+                                # add space to valid spaces
+                                self.validPlaces.update([(i + k, x + j + j)])
+                            # call function again with new space
+                            self.takes(piece, x+j+j, i+k)
                 except:
                     pass
+                # try to check if there is a piece of opposite colour one away in non standard direction and piece is king
                 try:
                     if -piece.player == self.squares[i2][x+j].player and piece.king:
                             # set grid space to be a valid space
                             self.squares[i2 + k2][x+j + j] = self.validSpace
-                            # add grid space to valid spaces
-                            self.validPlaces.update([(i2 + k2, x + j + j)])
-                            self.takes(piece, i2+k2, x+j+j)
+                            # check if space is already in valid spaces
+                            if (i2 + k2, x+j+j) in self.validPlaces:
+                                # add space to double takes
+                                self.DoubleTakes.add((i2+k2, x+j+j))
+                            else:
+                                # add grid space to valid spaces
+                                self.validPlaces.update([(i2 + k2, x + j + j)])
+                            # call function again with new space
+                            self.takes(piece, x+j+j, i2+k2)
                 except:
                     pass
 
@@ -269,10 +293,13 @@ class Grid:
                 self.whitePieces.remove(self.squares[y][x])
             self.squares[y][x] = self.blackSpace
             self.normalMove(start1, start2, end1, end2)
+            print("manahmahnah")
             self.ForcedPieces.clear()
+            self.DoubleTakes.clear()
         else:
             if (end1, end2) not in self.DoubleTakes:
                 removePieces = self.takeRoute(self.squares[start1][start2], start1, start2, end1, end2)
+                print(removePieces)
                 for p in removePieces:
                     self.squares[p.xy[0]][p.xy[1]] = self.blackSpace
                     if self.squares[start1][start2].player == 1:

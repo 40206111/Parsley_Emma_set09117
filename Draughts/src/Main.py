@@ -65,7 +65,7 @@ def boardSets(grid, change):
         elif theIn == '2':
             while not done:
                 try:
-                    print ("WARNING: changing this setting will reset the game")
+                    print("WARNING: changing this setting will reset the game")
                     rows = input("Input number of rows (Type Cancel to cancel): ")
                     if not rows.lower() == "cancel":
                         grid.setRows(int(rows))
@@ -79,7 +79,8 @@ def boardSets(grid, change):
         elif theIn == '3':
             print("WARNING: changing this setting will reset the game")
             done = True
-            space = input("Input the character you want to represent white spaces\nOnly the first character you type will be used: ")
+            space = input(
+                "Input the character you want to represent white spaces\nOnly the first character you type will be used: ")
             try:
                 grid.whiteSpace = space[0]
                 change = True
@@ -90,7 +91,8 @@ def boardSets(grid, change):
         elif theIn == '4':
             print("WARNING: changing this setting will reset the game")
             done = True
-            space = input("Input the character you want to represent black spaces\nOnly the first character you type will be used: ")
+            space = input(
+                "Input the character you want to represent black spaces\nOnly the first character you type will be used: ")
             try:
                 grid.blackSpace = space[0]
                 change = True
@@ -100,7 +102,8 @@ def boardSets(grid, change):
         # valid space setting
         elif theIn == '5':
             done = True
-            space = input("Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
+            space = input(
+                "Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
             try:
                 grid.validSpace = space[0]
             except:
@@ -131,7 +134,8 @@ def pieceSets(grid):
         # white pieces setting
         if theIn == '1':
             done = True
-            piece = input("Input the character you want to represent white pieces\nOnly the first character you type will be used: ")
+            piece = input(
+                "Input the character you want to represent white pieces\nOnly the first character you type will be used: ")
             try:
                 grid.whitePiece = piece[0]
                 grid.resetGrid()
@@ -141,7 +145,8 @@ def pieceSets(grid):
         # black piece setting
         elif theIn == '2':
             done = True
-            piece = input("Input the character you want to represent black pieces\nOnly the first character you type will be used: ")
+            piece = input(
+                "Input the character you want to represent black pieces\nOnly the first character you type will be used: ")
             try:
                 grid.blackPiece = piece[0]
                 grid.resetGrid()
@@ -151,7 +156,8 @@ def pieceSets(grid):
         # white king setting
         elif theIn == '3':
             done = True
-            piece = input("Input the character you want to represent white kings\nOnly the first character you type will be used: ")
+            piece = input(
+                "Input the character you want to represent white kings\nOnly the first character you type will be used: ")
             try:
                 grid.whiteKing = piece[0]
                 grid.resetGrid()
@@ -161,7 +167,8 @@ def pieceSets(grid):
         # black king setting
         elif theIn == '4':
             done = True
-            piece = input("Input the character you want to represent black kings\nOnly the first character you type will be used: ")
+            piece = input(
+                "Input the character you want to represent black kings\nOnly the first character you type will be used: ")
             try:
                 grid.blackKing = piece[0]
                 grid.resetGrid()
@@ -206,7 +213,6 @@ def settings(grid):
 
 # menu method
 def menu(grid):
-
     done = False
     # do while not done
     while not done:
@@ -241,9 +247,9 @@ def validPlaces(grid, x, y):
         # look in column before and column after
         for j in range(-1, 2, 2):
             # check if square is empty
-            if grid.testAvailable(i, x+j):
+            if grid.testAvailable(i, x + j):
                 # set grid space to be a valid space
-                grid.squares[i][x+j] = grid.validSpace
+                grid.squares[i][x + j] = grid.validSpace
                 # add grid space to valid spaces
                 grid.validPlaces.update([(i, x + j)])
     # check if it's a black piece or any king
@@ -253,9 +259,9 @@ def validPlaces(grid, x, y):
         # look in column before and column after
         for j in range(-1, 2, 2):
             # check if square is empty
-            if grid.testAvailable(i, x+j):
+            if grid.testAvailable(i, x + j):
                 # set grid space to be a valid space
-                grid.squares[i][x+j] = grid.validSpace
+                grid.squares[i][x + j] = grid.validSpace
                 # add grid space to valid spaces
                 grid.validPlaces.update([(i, x + j)])
 
@@ -282,13 +288,16 @@ def setInput(theIn):
 
 # move method
 def move(grid, starty, startx):
+    print(grid.validPlaces)
     done = False
     # do while not done
     while not done:
         print()
         grid.printGrid()
         print()
-        print("Input the coordinates of the space you would like to move to \n(type cancel to select other piece, valid spaces shown with  ", end=grid.validSpace)
+        print(
+            "Input the coordinates of the space you would like to move to \n(type cancel to select other piece, valid spaces shown with  ",
+            end=grid.validSpace)
         theIn = input("): ")
         # check if player wanted to cancel
         if theIn.lower() == "cancel":
@@ -304,12 +313,12 @@ def move(grid, starty, startx):
                 # check that move is valid
                 if (y, x) in grid.validPlaces:
                     # move piece in grid
-                     if grid.completeMove(starty, startx, y, x):
+                    if not grid.completeMove(starty, startx, y, x):
                         if grid.ForcedPieces:
                             print("ERROR: there are multiple ways to get to this point please enter your route step by step")
                         else:
                             done = True
-                        # print the grid again
+                            # print the grid again
                 else:
                     # give feedback for invalid input
                     print("\nERROR: invalid input\n")
@@ -318,8 +327,8 @@ def move(grid, starty, startx):
 
 
 def checkForTakes(grid, pieces):
-        for i in range(len(pieces)):
-            grid.canTake(pieces[i], pieces[i].xy[1], pieces[i].xy[0])
+    for i in range(len(pieces)):
+        grid.canTake(pieces[i], pieces[i].xy[1], pieces[i].xy[0])
 
 
 def forceTakeMove(grid):
@@ -448,7 +457,18 @@ def play(grid):
 # define main
 def main():
     # create grid of width and height
-    grid = Grid(4, 4, 1)
+    grid = Grid(8, 8, 1)
+    grid.setRows(1)
+    grid.createGrid()
+    # black
+    # grid.normalMove(0, 6, 1, 7)
+    # grid.normalMove(7, 1, 6, 2)
+    # grid.normalMove(7, 3, 4, 4)
+    # grid.normalMove(7, 5, 2, 6)
+    # white
+    grid.normalMove(0, 0, 6, 2)
+    grid.normalMove(0, 2, 4, 4)
+    grid.normalMove(0, 4, 2, 6)
     # print rules
     rules(grid)
     # go to menu
