@@ -194,6 +194,7 @@ class Grid:
                 if self.ForcedPieces:
                     self.takes(self.squares[end1][end2], end2, end1)
                     self.more = True
+                    return False
                 else:
                     self.more = False
         else:
@@ -297,7 +298,6 @@ class Grid:
         else:
             if (end1, end2) not in self.DoubleTakes:
                 removePieces = self.takeRoute(self.squares[start1][start2], start1, start2, end1, end2)
-                print(removePieces)
                 a = start1
                 b = start2
                 for p in removePieces:

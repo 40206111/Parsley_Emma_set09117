@@ -314,11 +314,14 @@ def move(grid, starty, startx):
                 if (y, x) in grid.validPlaces:
                     # move piece in grid
                     if not grid.completeMove(starty, startx, y, x):
-                        if grid.ForcedPieces:
-                            print("ERROR: there are multiple ways to get to this point please enter your route step by step")
+                        if grid.more:
+                            print("There are more pieces you can take, type cancel to end your turn")
+                            starty = y
+                            startx = x
                         else:
-                            done = True
-                            # print the grid again
+                            print("ERROR: there are multiple ways to get to this point please enter your route step by step")
+                    else:
+                        done = True
                 else:
                     # give feedback for invalid input
                     print("\nERROR: invalid input\n")
