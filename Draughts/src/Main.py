@@ -288,7 +288,6 @@ def setInput(theIn):
 
 # move method
 def move(grid, starty, startx):
-    print(grid.validPlaces)
     done = False
     # do while not done
     while not done:
@@ -461,8 +460,6 @@ def play(grid):
 def main():
     # create grid of width and height
     grid = Grid(8, 8, 1)
-    grid.setRows(1)
-    grid.createGrid()
     # print rules
     rules(grid)
     # go to menu
