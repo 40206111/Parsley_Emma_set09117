@@ -339,12 +339,10 @@ class Grid:
                         pass
         return[]
 
-
     def resetGrid(self):
-        for p in self.pieces:
-            if p.player == 1:
-                p.col = self.whitePiece
-                p.kingLetter = self.whiteKing
-            else:
-                p.col = self.blackPiece
-                p.kingLetter = self.blackKing
+        for p in self.whitePieces:
+            p.col = self.whitePiece
+            p.kingLetter = self.whiteKing
+        for p in self.blackPieces:
+            p.col = self.blackPiece
+            p.kingLetter = self.blackKing

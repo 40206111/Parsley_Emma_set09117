@@ -388,7 +388,7 @@ def choosePiece(grid):
         try:
             y, x = setInput(theIn)
             # check that values are within grid boundaries
-            if x in range(0, grid.width) or y in range(0, grid.height):
+            if x not in range(0, grid.width) or y not in range(0, grid.height):
                 print("\nERROR: invalid input\n")
             else:
                 # check that there is a valid piece in that square
