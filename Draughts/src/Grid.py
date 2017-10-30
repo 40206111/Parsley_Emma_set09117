@@ -225,7 +225,7 @@ class Grid:
                     pass
                 # try to check if there is a piece of opposite colour one away in non standard direction and piece is king
                 try:
-                    if piece.king and -piece.player == self.squares[i2][x + j].player:
+                    if piece.king and piece.king != self.turn and -piece.player == self.squares[i2][x + j].player:
                         # test if space 2 away is empty
                         if self.testAvailable(i2 + k2, x + j + j):
                             # add to forced pieces

@@ -418,10 +418,14 @@ def choosePiece(grid):
 # play method
 def play(grid):
     print()
-    print("\nPLAYER 1's TURN (" + grid.whitePiece + ")\n")
 
     done = False
     while not done:
+
+        if grid.player == 1:
+            print("\nPLAYER 1's TURN (" + grid.whitePiece + ")\n")
+        else:
+            print("\nPLAYER 2's TURN (" + grid.blackPiece + ")\n")
 
         if grid.player == 1:
             checkForTakes(grid, grid.whitePieces)
@@ -450,16 +454,12 @@ def play(grid):
         else:
             # change player
             grid.player *= -1
-            if grid.player == 1:
-                print("\nPLAYER 1's TURN (" + grid.whitePiece + ")\n")
-            else:
-                print("\nPLAYER 2's TURN (" + grid.blackPiece + ")\n")
 
 
 # define main
 def main():
     # create grid of width and height
-    grid = Grid(8, 8, 1)
+    grid = Grid(8, 8, 3)
     # print rules
     rules(grid)
     # go to menu
