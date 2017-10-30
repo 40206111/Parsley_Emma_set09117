@@ -371,7 +371,7 @@ def forceTakeMove(grid):
         except:
             print("\nERROR: Invalid input\n")
             return forceTakeMove(grid)
-    return False
+    return forceTakeMove(grid)
 
 
 def choosePiece(grid):
@@ -388,7 +388,7 @@ def choosePiece(grid):
         try:
             y, x = setInput(theIn)
             # check that values are within grid boundaries
-            if x < 0 or x > grid.width or y < 0 or y > grid.height:
+            if x in range(0, grid.width) or y in range(0, grid.height):
                 print("\nERROR: invalid input\n")
             else:
                 # check that there is a valid piece in that square
@@ -412,7 +412,7 @@ def choosePiece(grid):
         except:
             print("\nERROR: invalid input\n")
             return choosePiece(grid)
-    return False
+    return choosePiece(grid)
 
 
 # play method
