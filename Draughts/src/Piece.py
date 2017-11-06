@@ -1,4 +1,5 @@
-
+__author__ = 'Emma'
+__project__ = 'Draughts'
 
 class Piece:
 

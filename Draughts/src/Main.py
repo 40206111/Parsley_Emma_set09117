@@ -1,218 +1,16 @@
 # imports
 from __future__ import print_function
 from Grid import Grid
+from Settings import Settings
 
 __author__ = 'Emma'
 __project__ = 'Draughts'
 
 
-# define Draughts rules
-def rules(grid):
-    print("Rules:", end="\n\n• ")
-    print(grid.width, end="x")
-    print(grid.height, end=" grid.\n")
-    print("• Each player has", end=" ")
-    print(int(grid.pieceNo), end=" pieces\n")
-    print("• The counters go on the first", end=" ")
-    print(grid.rows, end=" rows\n")
-    print("• Pieces can only move Diagonally towards opponent")
-    print("• An opponents piece is Captured by jumping your piece over it diagonally")
-    print("• All landing spaces must be vacant")
-    print("• If an opponents piece can be captured it must be")
-    print("• multiple captures are possible if there's a blank space between each one")
-    print("• Pieces that get to the other side of the board become Kings and can move forward and backwards")
-    print()
-
-
-# settings for board
-def boardSets(grid, change):
-    print("\nBoard Settings:\n")
-    print("1. Board Size:", end=" ")
-    print(grid.width, end="x")
-    print(grid.height)
-    print("2. Starting rows:", end=" ")
-    print(grid.rows)
-    print("3. White Spaces: ", end=grid.whiteSpace)
-    print("\n4. Black Spaces: ", end=grid.blackSpace)
-    print("\n5. Valid movements: ", end=grid.validSpace)
-    print("\n6. Back")
-
-    done = False
-
-    # loop while not done
-    while not done:
-        theIn = input("enter number: ")
-        # Board Size Setting
-        if theIn == '1':
-            while not done:
-                try:
-                    print("WARNING: changing this setting will reset the game")
-                    print("Board width must be even and at least 4 and at most 26")
-                    width = input("Input board width (Type Cancel to cancel): ")
-                    if not width.lower() == "cancel":
-                        print("Board Height must less than 1000 and at least 4")
-                        height = input("Input board height (Type Cancel to cancel: ")
-                        if not height.lower() == "cancel":
-                            grid.setHeight(int(height))
-                            grid.setWidth(int(width))
-                            change = True
-                    done = True
-                    boardSets(grid, change)
-                except:
-                    print("ERROR: please enter whole numbers")
-
-        # Starting rows setting
-        elif theIn == '2':
-            while not done:
-                try:
-                    print("WARNING: changing this setting will reset the game")
-                    rows = input("Input number of rows (Type Cancel to cancel): ")
-                    if not rows.lower() == "cancel":
-                        grid.setRows(int(rows))
-                        change = True
-                    done = True
-                    boardSets(grid, change)
-                except:
-                    print("ERROR: Please enter a whole number")
-
-        # White space setting
-        elif theIn == '3':
-            print("WARNING: changing this setting will reset the game")
-            done = True
-            space = input(
-                "Input the character you want to represent white spaces\nOnly the first character you type will be used: ")
-            try:
-                grid.whiteSpace = space[0]
-                change = True
-            except:
-                print("ERROR: you did not input anything")
-            boardSets(grid, change)
-        # Black space setting
-        elif theIn == '4':
-            print("WARNING: changing this setting will reset the game")
-            done = True
-            space = input(
-                "Input the character you want to represent black spaces\nOnly the first character you type will be used: ")
-            try:
-                grid.blackSpace = space[0]
-                change = True
-            except:
-                print("ERROR: you did not input anything")
-            boardSets(grid, change)
-        # valid space setting
-        elif theIn == '5':
-            done = True
-            space = input(
-                "Input the character you want to represent valid spaces\nOnly the first character you type will be used: ")
-            try:
-                grid.validSpace = space[0]
-            except:
-                print("ERROR: you did not input anything")
-            boardSets(grid, change)
-        # back to settings
-        elif theIn == '6':
-            if change:
-                grid.createGrid()
-            done = True
-            settings(grid)
-
-
-# settings for pieces
-def pieceSets(grid):
-    print("\nPiece Settings:\n")
-    print("1. White pieces: ", end=grid.whitePiece)
-    print("\n2. Black pieces: ", end=grid.blackPiece)
-    print("\n3. White Kings: ", end=grid.whiteKing)
-    print("\n4. Black Kings: ", end=grid.blackKing)
-    print("\n5. Back")
-
-    done = False
-    # loop while not done
-    while not done:
-        theIn = input("enter number: ")
-
-        # white pieces setting
-        if theIn == '1':
-            done = True
-            piece = input(
-                "Input the character you want to represent white pieces\nOnly the first character you type will be used: ")
-            try:
-                grid.whitePiece = piece[0]
-                grid.resetGrid()
-            except:
-                print("ERROR: you did not input anything")
-            pieceSets(grid)
-        # black piece setting
-        elif theIn == '2':
-            done = True
-            piece = input(
-                "Input the character you want to represent black pieces\nOnly the first character you type will be used: ")
-            try:
-                grid.blackPiece = piece[0]
-                grid.resetGrid()
-            except:
-                print("ERROR: you did not input anything")
-            pieceSets(grid)
-        # white king setting
-        elif theIn == '3':
-            done = True
-            piece = input(
-                "Input the character you want to represent white kings\nOnly the first character you type will be used: ")
-            try:
-                grid.whiteKing = piece[0]
-                grid.resetGrid()
-            except:
-                print("ERROR: you did not input anything")
-            pieceSets(grid)
-        # black king setting
-        elif theIn == '4':
-            done = True
-            piece = input(
-                "Input the character you want to represent black kings\nOnly the first character you type will be used: ")
-            try:
-                grid.blackKing = piece[0]
-                grid.resetGrid()
-            except:
-                print("ERROR: you did not input anything")
-            pieceSets(grid)
-        elif theIn == '5':
-            done = True
-            settings(grid)
-
-
-# general settings
-def settings(grid):
-    print("\nSettings:\n")
-    print("1. See Board Settings")
-    print("2. See Piece settings")
-    print("3. Two Player: On  (Changing this setting will reset your game)")
-    print("4. Back")
-
-    done = False
-    # do while not done
-    while not done:
-        theIn = input("enter number: ")
-        # board settings
-        if theIn == "1":
-            done = True
-            boardSets(grid, False)
-        # piece settings
-        elif theIn == '2':
-            done = True
-            pieceSets(grid)
-        # toggle 2 players
-        elif theIn == '3':
-            done = True
-            print("This Setting cannot be changed yet")
-            settings(grid)
-        # back to menu
-        elif theIn == '4':
-            done = True
-            menu(grid)
-
+# ************** Menu ***************
 
 # menu method
-def menu(grid):
+def menu(grid, settings):
     done = False
     # do while not done
     while not done:
@@ -221,19 +19,16 @@ def menu(grid):
         # play game
         if theIn == "play":
             play(grid)
-            done = True
         # reset grid and play
         if theIn == "newgame":
             grid.createGrid()
             play(grid)
-            done = True
         # view settings
         elif theIn == "settings":
-            settings(grid)
-            done = True
+            settings.settings()
         # view rules
         elif theIn == "rules":
-            rules(grid)
+            settings.rules()
         # exit game
         elif theIn == "exit":
             done = True
@@ -345,7 +140,6 @@ def forceTakeMove(grid):
     theIn = input("Input: ")
     # check if player wants to quit
     if theIn.lower() == "quit":
-        menu(grid)
         return True
     else:
         try:
@@ -382,7 +176,6 @@ def choosePiece(grid):
     theIn = input("Input coordinates of piece you would like to move: ")
     # check if player wants to quit
     if theIn.lower() == "quit":
-        menu(grid)
         return True
     else:
         try:
@@ -460,10 +253,11 @@ def play(grid):
 def main():
     # create grid of width and height
     grid = Grid(8, 8, 3)
+    settings = Settings(grid)
     # print rules
-    rules(grid)
+    settings.rules()
     # go to menu
-    menu(grid)
+    menu(grid, settings)
 
 
 # run from main
