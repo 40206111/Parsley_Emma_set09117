@@ -213,7 +213,7 @@ class Grid:
         # for square before and square after
         for j in range(-1, 2, 2):
             # if space 2 away is within grid
-            if x + j + j in range(0, self.width) or i + k in range(0, self.height):
+            if x + j + j in range(0, self.width) and i + k in range(0, self.height):
                 # try to check if there is a piece of opposite colour one away
                 try:
                     if -piece.player == self.squares[i][x + j].player:
@@ -245,7 +245,7 @@ class Grid:
         # for square one before and square one after
         for j in range(-1, 2, 2):
             # check if square + 2 within grid
-            if x + j + j in range(0, self.width) or i + k in range(0, self.height):
+            if x + j + j in range(0, self.width) and i + k in range(0, self.height):
                 # try to check if there is a piece of opposite colour one away
                 try:
                     if -piece.player == self.squares[i][x + j].player:
