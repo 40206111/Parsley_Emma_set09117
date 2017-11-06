@@ -201,7 +201,7 @@ class Grid:
             self.normalMove(start1, start2, end1, end2)
         return True
 
-    def canTake(self, piece, x, y):
+    def canTake(self, piece, y, x):
         # + 1 in direction piece is allowed to move
         i = y - piece.player
         # + 2 in direction piece is allowed to move
@@ -223,6 +223,7 @@ class Grid:
                             self.ForcedPieces.add(piece.xy)
                 except:
                     pass
+            if x + j + j in range(0, self.width) and i2 + k2 in range(0, self.height):
                 # try to check if there is a piece of opposite colour one away in non standard direction and piece is king
                 try:
                     if piece.king and piece.king != self.turn and -piece.player == self.squares[i2][x + j].player:
@@ -233,7 +234,7 @@ class Grid:
                 except:
                     pass
 
-    def takes(self, piece, x, y):
+    def takes(self, piece, y, x):
         # + 1 in direction piece is allowed to move
         i = y - piece.player
         # + 2 in direction piece is allowed to move
@@ -264,6 +265,7 @@ class Grid:
                             self.takes(piece, x + j + j, i + k)
                 except:
                     pass
+            if x + j + j in range(0, self.width) and i2 + k2 in range(0, self.height):
                 # try to check if there is a piece of opposite colour one away in non standard direction and piece is king
                 try:
                     if -piece.player == self.squares[i2][x + j].player and piece.king:
@@ -346,3 +348,29 @@ class Grid:
         for p in self.blackPieces:
             p.col = self.blackPiece
             p.kingLetter = self.blackKing
+
+    # method to look for valid places to move to
+    def FindValids(self, y, x):
+        if self.squares[y][x].player == 1 or self.squares[y][x].king != 0:
+            # set i to row above
+            i = y - 1
+            # look in column before and column after
+            for j in range(-1, 2, 2):
+                # check if square is empty
+                if self.testAvailable(i, x + j):
+                    # set grid space to be a valid space
+                    self.squares[i][x + j] = self.validSpace
+                    # add grid space to valid spaces
+                    self.validPlaces.update([(i, x + j)])
+        # check if it's a black piece or any king
+        if self.squares[y][x].player == -1 or self.squares[y][x].king != 0:
+            # set i to row below
+            i = y + 1
+            # look in column before and column after
+            for j in range(-1, 2, 2):
+                # check if square is empty
+                if self.testAvailable(i, x + j):
+                    # set grid space to be a valid space
+                    self.squares[i][x + j] = self.validSpace
+                    # add grid space to valid spaces
+                    self.validPlaces.update([(i, x + j)])
