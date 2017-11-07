@@ -199,8 +199,11 @@ def choosePiece(grid):
     print("\nType \"Quit\" to quit")
     # set theIn to input
     theIn = input("Input coordinates of piece you would like to move: ")
+    if theIn.lower() == "undo" and grid.turn != 0:
+        undo(grid)
+        return True
     # check if player wants to quit
-    if theIn.lower() == "quit":
+    elif theIn.lower() == "quit":
         return True
     else:
         # try to select piece to move
@@ -269,9 +272,6 @@ def play(grid):
         else:
             done = forceTakeMove(grid)
 
-        # increase turn
-        grid.turn += 1
-
         # check if anyone has Won
         if len(grid.blackPieces) == 0:
             print()
@@ -288,6 +288,24 @@ def play(grid):
         else:
             # change player
             grid.player *= -1
+
+        if grid.memory.turn == grid.turn:
+            grid.memory.turn += 1
+        # increase turn
+        grid.turn += 1
+
+def undo(grid):
+    lastTurn = grid.turn - 1
+    for p in grid.memory.usedPieces[lastTurn]:
+        xy = p.turn.get(lastTurn)
+        grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
+        if p.turnTaken == lastTurn:
+            p.turnTaken = 0;
+        if p.king == lastTurn:
+            p.king == 0
+    grid.turn -= 1
+    grid.player *= -1
+    play(grid)
 
 
 # define main

@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 from Piece import Piece
+from Memory import Memory
 
 __author__ = 'Emma'
 __project__ = 'Draughts'
@@ -56,6 +57,7 @@ class Grid:
         # Create list of grid squares variable
         self.squares = []
 
+        self.memory = Memory(self.blackPieces, self.whitePieces)
         # Create Grid
         self.createGrid()
 
@@ -137,6 +139,7 @@ class Grid:
                 else:
                     self.squares[i].append(self.blackSpace)
                     self.usableSquares.update([(i, j)])
+        self.memory.setPieces(self.blackPieces, self.whitePieces)
 
     # print grid method
     def printGrid(self):
@@ -202,6 +205,7 @@ class Grid:
         self.squares[end1][end2] = tempPiece
         # set pieces new coordinates
         self.squares[end1][end2].xy = (end1, end2)
+        self.squares[end1][end2].turn.update({self.turn: (start1, start2)})
         # set start square to be empty
         self.squares[start1][start2] = self.blackSpace
 
@@ -228,11 +232,13 @@ class Grid:
         else:
             # else carry out a normal move
             self.normalMove(start1, start2, end1, end2)
+            self.memory.updateUsed(self.squares[end1][end2], self.turn)
         return True
 
     def jumpPiece(self, player, start1, start2, y, x):
         # tell piece it has been taken
         self.squares[y][x].turnTaken = self.turn
+        self.memory.updateUsed(self.squares[y][x], self.turn)
         # if remove pieces from opposite players list
         if player == 1:
             self.blackPieces.remove(self.squares[y][x])
