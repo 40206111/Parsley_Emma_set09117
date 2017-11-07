@@ -14,13 +14,12 @@ class Grid:
         # declare piece number, will be set when rows is set
         self.pieceNo = 0
 
-        # set amount of rows pieces should go on
+        # declare rows
         self.rows = rows
-        self.setRows(rows)
-
-        # set grid dimensions
+        # set grid width
         self.width = width
         self.setWidth(width)
+        # set grid height
         self.height = height
         self.setHeight(height)
 
@@ -83,6 +82,7 @@ class Grid:
         else:
             # set height to given height
             self.height = height
+        # set rows to be correct with new height
         self.setRows(self.rows)
 
     # Width Setter

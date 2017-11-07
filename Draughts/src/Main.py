@@ -292,7 +292,7 @@ def play(grid):
 # define main
 def main():
     # create grid of width and height
-    grid = Grid(8, 8, 1)
+    grid = Grid(8, 8, 3)
     settings = Settings(grid)
     # print rules
     settings.rules()
