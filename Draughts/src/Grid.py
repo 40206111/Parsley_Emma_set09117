@@ -55,6 +55,7 @@ class Grid:
         self.DoubleTakes = set([])
         # Create list of grid squares variable
         self.squares = []
+
         # Create Grid
         self.createGrid()
 
@@ -211,14 +212,14 @@ class Grid:
             # call complete takes method
             self.completeTakes(start1, start2, end1, end2)
             # check if it was successful
-            if self.ForcedPieces:
+            if self.ForcedPieces or self.validPlaces:
                 return False
             else:
                 # check if it's possible to take more pieces
-                self.canTake(self.squares[end1][end2], end2, end1)
+                self.canTake(self.squares[end1][end2], end1, end2)
                 if self.ForcedPieces:
                     # add possible takes to appropriate variables
-                    self.takes(self.squares[end1][end2], end2, end1)
+                    self.takes(set(), self.squares[end1][end2], end1, end2)
                     # set more moves to true
                     self.more = True
                     return False
@@ -229,37 +230,48 @@ class Grid:
             self.normalMove(start1, start2, end1, end2)
         return True
 
+    def jumpPiece(self, player, start1, start2, y, x):
+        # tell piece it has been taken
+        self.squares[y][x].turnTaken = self.turn
+        # if remove pieces from opposite players list
+        if player == 1:
+            self.blackPieces.remove(self.squares[y][x])
+        else:
+            self.whitePieces.remove(self.squares[y][x])
+        # set place where taken piece was to empty
+        self.squares[y][x] = self.blackSpace
+        # complete move as normal
+        self.normalMove(start1, start2, y + (y-start1), x + (x - start2))
+
     # method for completing move if you can take
     def completeTakes(self, start1, start2, end1, end2):
+        multi = False
+        player = self.squares[start1][start2].player
         # if end space only 1 take away
         if end1 in range(start1 - 2, start1 + 3) and end2 in range(start2 - 2, start2 + 3):
             # set y and x to coordinates of square with piece to be taken in
-            y = end1 + (start1 - end1) / 2
-            x = end2 + (start2 - end2) / 2
+            y = (end1 + start1) / 2
+            x = (end2 + start2) / 2
             # make sure y and x are ints
             y = int(y)
             x = int(x)
-            # if remove pieces from opposite players list
-            if self.squares[start1][start2].player == 1:
-                self.blackPieces.remove(self.squares[y][x])
+            if self.testAvailable(y, x):
+                multi = True
             else:
-                self.whitePieces.remove(self.squares[y][x])
-            # tell piece it has been taken
-            self.squares[y][x].turnTaken = self.turn
-            # set place where taken piece was to empty
-            self.squares[y][x] = self.blackSpace
-            # complete move as normal
-            self.normalMove(start1, start2, end1, end2)
-            # clear forced pieces
-            self.ForcedPieces.clear()
-            # clear double takes
-            self.DoubleTakes.clear()
+                self.jumpPiece(player, start1, start2, y, x)
+                # clear forced pieces
+                self.ForcedPieces.clear()
+                # clear double takes
+                self.DoubleTakes.clear()
+
         else:
+            multi = True
+
+        if multi:
             # if the end doesn't have multiple routes to get to it
             if (end1, end2) not in self.DoubleTakes:
                 # set pieces to remove to return from take route
-                removePieces = self.takeRoute(self.squares[start1][start2], start1, start2, end1, end2)
-
+                removePieces = self.takeRoute(set(), self.squares[start1][start2], start1, start2, end1, end2)
                 # check if pieces can be removed
                 if removePieces:
                     # set a and b to start coordinates
@@ -267,50 +279,56 @@ class Grid:
                     b = start2
                     # for all pieces that can be removed
                     for p in removePieces:
-                        # set temp piece to be piece to be removed
-                        tempPiece = self.squares[p[0]][p[1]]
-                        # tell piece it has been taken
-                        tempPiece.turnTaken = self.turn
-                        # set square to be empty
-                        self.squares[p[0]][p[1]] = self.blackSpace
-                        # remove piece from appropriate list
-                        if self.squares[a][b].player == 1:
-                            self.blackPieces.remove(tempPiece)
-                        else:
-                            self.whitePieces.remove(tempPiece)
-                        # move
-                        self.normalMove(a, b, p[0]+(p[0] - a), p[1] + (p[1] - b))
+                        self.jumpPiece(player, a, b, p[0], p[1])
                         # set a and b to next end square
                         a = p[0]+(p[0] - a)
                         b = p[1] + (p[1] - b)
                         # print grid
                         self.printGrid()
-                    # empty forced pieces
+                    # clear forced pieces
                     self.ForcedPieces.clear()
-                    # empty double takes
+                    # clear double takes
                     self.DoubleTakes.clear()
 
+
     # method to calculate route that gets a piece from start to end through taking
-    def takeRoute(self, piece, start1, start2, end1, end2):
+    def takeRoute(self, jumped, piece, start1, start2, end1, end2):
         # declare output
         output = []
+        # for square above and below start
         for i in range(-1, 2, 2):
+            # for square left or right of start
             for j in range(-1, 2, 2):
+                # if at the end return output
                 if start1 == end1 and start2 == end2:
                     return output
-                if start1 in range(0, self.height) and start2 in range(0, self.width):
+                # if on the board
+                elif start1 in range(0, self.height) and start2 in range(0, self.width):
                     try:
-                        if -piece.player == self.squares[start1 + i][start2 + j].player:
-                            if (start1 + i + i, start2 + j + j) in self.validPlaces:
-                                if (start1 + i + i, start2 + j + j) in self.DoubleTakes:
-                                    return []
-                                else:
-                                    output.append((start1 + i, start2 + j))
-                                    output = output + self.takeRoute(piece, start1 + i + i, start2 + j + j, end1, end2)
-                                    if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
-                                        return output
+                        # if piece is in the right direction or can take both ways
+                        if i == piece.player or piece.king:
+                            # if there is the opponents piece
+                            if -piece.player == self.squares[start1 + i][start2 + j].player and (start1 + i, start2 + j) not in jumped:
+                                # if space is valid
+                                if (start1 + i + i, start2 + j + j) in self.validPlaces:
+                                    # if space has multiple routes
+                                    if (start1 + i + i, start2 + j + j) in self.DoubleTakes:
+                                        # return nothing
+                                        return []
                                     else:
-                                        output.remove(output[len(output) - 1])
+                                        jumped.add((start1 + i, start2 + j))
+                                        # append piece to output
+                                        output.append((start1 + i, start2 + j))
+                                        # append other possible pieces to output
+                                        output = output + self.takeRoute(jumped, piece, start1 + i + i, start2 + j + j, end1, end2)
+                                        # if output is not equal to this one or end
+                                        if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
+                                            #return output
+                                            return output
+                                        else:
+                                            jumped.clear()
+                                            # remove last one added to output
+                                            output.remove(output[len(output) - 1])
                     except:
                         pass
         return[]
@@ -350,7 +368,7 @@ class Grid:
                     pass
 
     # method for
-    def takes(self, piece, y, x):
+    def takes(self, jumped, piece, y, x):
         # + 1 in direction piece is allowed to move
         i = y - piece.player
         # + 2 in direction piece is allowed to move
@@ -365,38 +383,39 @@ class Grid:
             if x + j + j in range(0, self.width) and i + k in range(0, self.height):
                 # try to check if there is a piece of opposite colour one away
                 try:
-                    if -piece.player == self.squares[i][x + j].player:
+                    if -piece.player == self.squares[i][x + j].player and (i, x+ j) not in jumped:
+                        if (i + k, x + j + j) in self.validPlaces:
+                            # add space to double takes
+                            self.DoubleTakes.add((i + k, x + j + j))
                         # test if square 2 away is empty
-                        if self.testAvailable(i + k, x + j + j):
+                        elif self.testAvailable(i + k, x + j + j):
                             # set grid space to be a valid space
                             self.squares[i + k][x + j + j] = self.validSpace
-                            # check if space already in valid spaces
-                            if (i + k, x + j + j) in self.validPlaces:
-                                # add space to double takes
-                                self.DoubleTakes.add((i + k, x + j + j))
-                            else:
+                            if (i + k, x + j + j) != piece.xy:
                                 # add space to valid spaces
                                 self.validPlaces.update([(i + k, x + j + j)])
-                            # call function again with new space
-                            self.takes(piece, x + j + j, i + k)
+                                jumped.add((i, x + j))
+                                # call function again with new space
+                                self.takes(jumped, piece, i + k, x + j + j)
                 except:
                     pass
             # if space 2 away is within grid
             if x + j + j in range(0, self.width) and i2 + k2 in range(0, self.height):
                 # try to check if there is a piece of opposite colour one away in non standard direction and piece is king
                 try:
-                    if -piece.player == self.squares[i2][x + j].player and piece.king:
-                        # set grid space to be a valid space
-                        self.squares[i2 + k2][x + j + j] = self.validSpace
-                        # check if space is already in valid spaces
+                    if -piece.player == self.squares[i2][x + j].player and piece.king and (i2, x + j) not in jumped:
                         if (i2 + k2, x + j + j) in self.validPlaces:
                             # add space to double takes
                             self.DoubleTakes.add((i2 + k2, x + j + j))
-                        else:
-                            # add grid space to valid spaces
-                            self.validPlaces.update([(i2 + k2, x + j + j)])
-                        # call function again with new space
-                        self.takes(piece, x + j + j, i2 + k2)
+                        elif self.testAvailable(i2 + k2, x + j + j):
+                            # set grid space to be a valid space
+                            self.squares[i2 + k2][x + j + j] = self.validSpace
+                            if (i2 + k2, x + j + j) != piece.xy:
+                                # add grid space to valid spaces
+                                self.validPlaces.update([(i2 + k2, x + j + j)])
+                                jumped.add((i2, x + j))
+                                # call function again with new space
+                                self.takes(jumped, piece, i2 + k2, x + j + j)
                 except:
                     pass
 

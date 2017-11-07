@@ -90,7 +90,7 @@ def move(grid, starty, startx):
         # set theIn to input
         theIn = input("): ")
         # check if player wanted to cancel
-        if theIn.lower() == "cancel":
+        if theIn.lower() == "cancel" and not grid.more:
             # set done to true
             done = True
         # if player wants to finish there move and they have already moved
@@ -103,6 +103,7 @@ def move(grid, starty, startx):
             grid.ForcedPieces.clear()
             # empty double takes
             grid.DoubleTakes.clear()
+            done = True
         else:
             # try to complete move
             try:
@@ -115,7 +116,7 @@ def move(grid, starty, startx):
                         # if more moves
                         if grid.more:
                             # print explanation
-                            print("There are more pieces you can take, type cancel to end your turn")
+                            print("There are more pieces you can take, type no to end your turn")
                             # set starty to y
                             starty = y
                             # set start x to x
@@ -128,10 +129,10 @@ def move(grid, starty, startx):
                         done = True
                 else:
                     # give feedback for invalid input
-                    print("\nERROR: invalid input\n")
+                    print("\nERROR: invalid input")
             except:
                 # print error
-                print("\nERROR: invalid input\n")
+                print("\nERROR: invalid input")
 
 
 # first method for movement if take has been forced
@@ -160,14 +161,14 @@ def forceTakeMove(grid):
             # check that there is a valid piece in that square
             if (y, x) not in grid.ForcedPieces:
                 # print error
-                print("\nERROR: invalid input\n")
+                print("\nERROR: invalid input")
             else:
                 # check for valid places piece can move
-                grid.takes(grid.squares[y][x], y, x)
+                grid.takes(set(), grid.squares[y][x], y, x)
                 # check that there where valid spaces
                 if not grid.validPlaces:
                     # program should not be able to get here without valid movements
-                    print("\nERROR: Something has gone wrong\n")
+                    print("\nERROR: Something has gone wrong")
                     # print grid
                     grid.printGrid()
                 else:
@@ -183,7 +184,7 @@ def forceTakeMove(grid):
                         return False
         except:
             # print error
-            print("\nERROR: Invalid input\n")
+            print("\nERROR: Invalid input")
             return forceTakeMove(grid)
     return forceTakeMove(grid)
 
@@ -209,7 +210,7 @@ def choosePiece(grid):
             # check that values are within grid boundaries
             if x not in range(0, grid.width) or y not in range(0, grid.height):
                 # print error
-                print("\nERROR: invalid input\n")
+                print("\nERROR: invalid input")
             else:
                 # check that there is a valid piece in that square
                 if grid.squares[y][x].player == grid.player:
@@ -218,7 +219,7 @@ def choosePiece(grid):
                     # check that there where valid spaces
                     if not grid.validPlaces:
                         # print error
-                        print("\nERROR: No valid movements\n")
+                        print("\nERROR: No valid movements")
                         # print grid
                         grid.printGrid()
                     else:
@@ -232,9 +233,9 @@ def choosePiece(grid):
                             return False
                 else:
                     # print error
-                    print("\nERROR: your piece is not on this square\n")
+                    print("\nERROR: your piece is not on this square")
         except:
-            print("\nERROR: invalid input\n")
+            print("\nERROR: invalid input")
             return choosePiece(grid)
     return choosePiece(grid)
 
@@ -252,9 +253,9 @@ def play(grid):
 
         # print the player who's turn it is
         if grid.player == 1:
-            print("\nPLAYER 1's TURN (" + grid.whitePiece + ")\n")
+            print("\nPLAYER 1's TURN (" + grid.whitePiece + ")")
         else:
-            print("\nPLAYER 2's TURN (" + grid.blackPiece + ")\n")
+            print("\nPLAYER 2's TURN (" + grid.blackPiece + ")")
 
         # check if current player has any forced takes
         if grid.player == 1:
@@ -294,6 +295,7 @@ def main():
     # create grid of width and height
     grid = Grid(8, 8, 3)
     settings = Settings(grid)
+
     # print rules
     settings.rules()
     # go to menu
