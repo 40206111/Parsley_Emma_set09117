@@ -22,7 +22,7 @@ def menu(grid, settings):
         if theIn == "play":
             play(grid)
         # reset grid and play
-        if theIn == "newgame":
+        elif theIn == "newgame":
             # reset grid
             grid.createGrid()
             play(grid)
@@ -157,11 +157,13 @@ def forceTakeMove(grid):
         print()
     # set theIn to input
     theIn = input("Input: ")
-    if theIn.lower() == "undo" and grid.turn != 0:
+    if theIn.lower() == "undo":
         undo(grid)
+        play(grid)
         return True
     elif theIn.lower() == "redo":
         redo(grid)
+        play(grid)
         return True
     # check if player wants to quit
     elif theIn.lower() == "quit":
@@ -212,11 +214,13 @@ def choosePiece(grid):
     print("\nType \"Quit\" to quit")
     # set theIn to input
     theIn = input("Input coordinates of piece you would like to move: ")
-    if theIn.lower() == "undo" and grid.turn != 0:
+    if theIn.lower() == "undo":
         undo(grid)
+        play(grid)
         return True
     elif theIn.lower() == "redo":
         redo(grid)
+        play(grid)
         return True
     # check if player wants to quit
     elif theIn.lower() == "quit":
@@ -313,8 +317,8 @@ def play(grid):
 
 def redo(grid):
     nextTurn = grid.turn
-    if nextTurn > grid.memory.turn:
-        print("no more redos")
+    if nextTurn >= grid.memory.turn:
+        print("NO MORE REDOs")
         play(grid)
     else:
         grid.ForcedPieces.clear()
@@ -333,30 +337,32 @@ def redo(grid):
                 grid.squares[p.xy[0]][p.xy[1]] = grid.blackSpace
         grid.turn += 1
         grid.player *= -1
-        play(grid)
 
 
 def undo(grid):
-    lastTurn = grid.turn - 1
-    grid.ForcedPieces.clear()
-    grid.DoubleTakes.clear()
-    grid.emptyValids()
-    grid.turn -= 1
-    for p in grid.memory.usedPieces[lastTurn]:
-        if lastTurn in p.turn:
-            xy = p.turn.get(lastTurn)
-            grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
-        if p.turnTaken == lastTurn:
-            p.turnTaken = 0
-            grid.squares[p.xy[0]][p.xy[1]] = p
-            if p.player == 1:
-                grid.whitePieces.append(p)
-            else:
-                grid.blackPieces.append(p)
-        if p.king == lastTurn:
-            p.king = 0
-    grid.player *= -1
-    play(grid)
+    if grid.turn == 0:
+        print("NO MORE UNDOs")
+        play(grid)
+    else:
+        lastTurn = grid.turn - 1
+        grid.ForcedPieces.clear()
+        grid.DoubleTakes.clear()
+        grid.emptyValids()
+        grid.turn -= 1
+        for p in grid.memory.usedPieces[lastTurn]:
+            if lastTurn in p.turn:
+                xy = p.turn.get(lastTurn)
+                grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
+            if p.turnTaken == lastTurn:
+                p.turnTaken = 0
+                grid.squares[p.xy[0]][p.xy[1]] = p
+                if p.player == 1:
+                    grid.whitePieces.append(p)
+                else:
+                    grid.blackPieces.append(p)
+            if p.king == lastTurn:
+                p.king = 0
+        grid.player *= -1
 
 
 # define main
