@@ -24,14 +24,14 @@ def menu(grid, settings):
         theIn = theIn.lower()
         # play game
         if theIn == "play":
-            play(grid)
+            play(grid, settings)
         # reset grid and play
         elif theIn == "newgame":
             # reset grid
             grid.createGrid()
-            play(grid)
+            play(grid, settings)
         elif theIn == "replay" and grid.memory.turn > 0:
-            replay(grid)
+            replay(grid, settings)
         # view settings
         elif theIn == "settings":
             settings.settings()
@@ -171,12 +171,10 @@ def forceTakeMove(grid):
     theIn = input("Input: ")
     if theIn.lower() == "undo":
         undo(grid)
-        play(grid)
-        return True
+        return 2
     elif theIn.lower() == "redo":
         redo(grid)
-        play(grid)
-        return True
+        return 2
     # check if player wants to quit
     elif theIn.lower() == "quit":
         return True
@@ -226,12 +224,10 @@ def choosePiece(grid):
     theIn = input("Input coordinates of piece you would like to move: ")
     if theIn.lower() == "undo":
         undo(grid)
-        play(grid)
-        return True
+        return 2
     elif theIn.lower() == "redo":
         redo(grid)
-        play(grid)
-        return True
+        return 2
     # check if player wants to quit
     elif theIn.lower() == "quit":
         return True
@@ -276,7 +272,7 @@ def choosePiece(grid):
 # ************* Play *************
 
 # play method
-def play(grid):
+def play(grid, settings):
     print()
 
     # do while not done
@@ -287,7 +283,7 @@ def play(grid):
             grid.printGrid()
             print("\nPLAYER 1 WINS!\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
-            if  theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
+            if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
                 replay(grid)
             break
         elif len(grid.whitePieces) == 0:
@@ -308,21 +304,28 @@ def play(grid):
         else:
             checkForTakes(grid, grid.blackPieces)
 
-        # if player doesn't have forced takes move normally
-        if not grid.ForcedPieces:
-            done = choosePiece(grid)
-        else:
-            done = forceTakeMove(grid)
-        if done:
-            break
+        if settings.coms > 0:
+            if grid.player == settings.com1.player:
+                settings.com1.calculateMove()
+            elif settings.coms == 2 and grid.player == settings.com2.player:
+                settings.com2.calculateMove()
+        if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
 
-        # change player
-        grid.player *= -1
+            # if player doesn't have forced takes move normally
+            if not grid.ForcedPieces:
+                done = choosePiece(grid)
+            else:
+                done = forceTakeMove(grid)
+        if not done:
+            # change player
+            grid.player *= -1
 
         if grid.memory.turn == grid.turn:
             grid.memory.turn += 1
-        # increase turn
-        grid.turn += 1
+            # increase turn
+            grid.turn += 1
+        elif done and done != 2:
+            break
 
 
 def replay(grid):

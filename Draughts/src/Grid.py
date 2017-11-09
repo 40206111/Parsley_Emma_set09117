@@ -323,26 +323,24 @@ class Grid:
                         if i != piece.player or piece.king:
                             # if there is the opponents piece
                             if -piece.player == self.squares[start1 + i][start2 + j].player and (start1 + i, start2 + j) not in jumped:
-                                # if space is valid
-                                if (start1 + i + i, start2 + j + j) in self.validPlaces:
-                                    # if space has multiple routes
-                                    if (start1 + i + i, start2 + j + j) in self.DoubleTakes:
-                                        # return nothing
-                                        return []
+                                # if space has multiple routes
+                                if (start1 + i + i, start2 + j + j) in self.DoubleTakes:
+                                    # return nothing
+                                    return []
+                                else:
+                                    jumped.add((start1 + i, start2 + j))
+                                    # append piece to output
+                                    output.append((start1 + i, start2 + j))
+                                    # append other possible pieces to output
+                                    output = output + self.takeRoute(jumped, piece, start1 + i + i, start2 + j + j, end1, end2)
+                                    # if output is not equal to this one or end
+                                    if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
+                                        #return output
+                                        return output
                                     else:
-                                        jumped.add((start1 + i, start2 + j))
-                                        # append piece to output
-                                        output.append((start1 + i, start2 + j))
-                                        # append other possible pieces to output
-                                        output = output + self.takeRoute(jumped, piece, start1 + i + i, start2 + j + j, end1, end2)
-                                        # if output is not equal to this one or end
-                                        if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
-                                            #return output
-                                            return output
-                                        else:
-                                            jumped.clear()
-                                            # remove last one added to output
-                                            output.remove(output[len(output) - 1])
+                                        jumped.clear()
+                                        # remove last one added to output
+                                        output.remove(output[len(output) - 1])
                     except:
                         pass
         return[]

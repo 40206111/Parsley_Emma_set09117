@@ -9,14 +9,25 @@ __project__ = 'Draughts'
 class Settings:
     def __init__(self, grid, coms):
         self.grid = grid
-        self.com1 = AI(grid, 1)
-        self.com2 = AI(grid, -1)
+        self.com1 = AI(grid, -1)
+        self.com2 = AI(grid, 1)
         self.coms = coms
 
     # define Draughts rules
     def rules(self):
         # rules printed based on the board settings
-        print("\nRULES:", end="\n\n• ")
+        print("\nRULES:", end="\n\n")
+        print("Player 1: ", end="")
+        if self.coms > 0 and self.com1.player == 1:
+            print("COMPUTER")
+        else:
+            print("HUMAN")
+        print("Player 2: ", end="")
+        if (self.coms > 0 and self.com1.player == -1) or self.coms == 2:
+            print("COMPUTER\n")
+        else:
+            print("HUMAN\n")
+        print("• ", end="")
         print(self.grid.width, end="x")
         print(self.grid.height, end=" grid.\n")
         print("• Each player has", end=" ")
@@ -276,6 +287,8 @@ class Settings:
                 self.coms += 1
                 if self.coms > 2:
                     self.coms = 0
+                elif self.coms == 2:
+                    self.com1.player = -1
             elif theIn == '4' and self.coms == 1:
                 self.com1.player *= -1
             # back to menu
