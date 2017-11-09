@@ -114,6 +114,9 @@ class Grid:
         self.whitePieces = []
         self.blackPieces = []
         self.usableSquares = set([])
+        self.ForcedPieces.clear()
+        self.DoubleTakes.clear()
+        self.validPlaces.clear()
 
         # Create amount of rows needed
         for i in range(self.height):
@@ -139,6 +142,8 @@ class Grid:
                 else:
                     self.squares[i].append(self.blackSpace)
                     self.usableSquares.update([(i, j)])
+        self.memory.turn = 0
+        self.turn = 0
         self.memory.setPieces(self.blackPieces, self.whitePieces)
 
     # print grid method

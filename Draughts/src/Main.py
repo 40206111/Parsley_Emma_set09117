@@ -160,6 +160,9 @@ def forceTakeMove(grid):
     if theIn.lower() == "undo" and grid.turn != 0:
         undo(grid)
         return True
+    elif theIn.lower() == "redo":
+        redo(grid)
+        return True
     # check if player wants to quit
     elif theIn.lower() == "quit":
         return True
@@ -211,6 +214,9 @@ def choosePiece(grid):
     theIn = input("Input coordinates of piece you would like to move: ")
     if theIn.lower() == "undo" and grid.turn != 0:
         undo(grid)
+        return True
+    elif theIn.lower() == "redo":
+        redo(grid)
         return True
     # check if player wants to quit
     elif theIn.lower() == "quit":
@@ -303,6 +309,32 @@ def play(grid):
             grid.memory.turn += 1
         # increase turn
         grid.turn += 1
+
+
+def redo(grid):
+    nextTurn = grid.turn
+    if nextTurn > grid.memory.turn:
+        print("no more redos")
+        play(grid)
+    else:
+        grid.ForcedPieces.clear()
+        grid.DoubleTakes.clear()
+        grid.emptyValids()
+        for p in grid.memory.usedPieces[nextTurn]:
+            if nextTurn in p.turn:
+                xy = p.turn.get(nextTurn)
+                grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
+            else:
+                p.turnTaken = nextTurn
+                if p.player == 1:
+                    grid.whitePieces.remove(p)
+                else:
+                    grid.blackPieces.remove(p)
+                grid.squares[p.xy[0]][p.xy[1]] = grid.blackSpace
+        grid.turn += 1
+        grid.player *= -1
+        play(grid)
+
 
 def undo(grid):
     lastTurn = grid.turn - 1
