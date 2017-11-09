@@ -75,6 +75,13 @@ def checkForTakes(grid, pieces):
 
 # move method
 def move(grid, starty, startx):
+    if len(grid.memory.usedPieces) > grid.turn:
+        if 0 != grid.memory.turn >= grid.turn:
+            for i in range(len(grid.memory.usedPieces)-1, grid.turn-1, -1):
+                del grid.memory.usedPieces[i]
+        else:
+            del grid.memory.usedPieces[grid.turn]
+
     # initialise done to false
     done = False
     # do while not done
@@ -150,8 +157,11 @@ def forceTakeMove(grid):
         print()
     # set theIn to input
     theIn = input("Input: ")
+    if theIn.lower() == "undo" and grid.turn != 0:
+        undo(grid)
+        return True
     # check if player wants to quit
-    if theIn.lower() == "quit":
+    elif theIn.lower() == "quit":
         return True
     else:
         # try to select piece to move
@@ -296,14 +306,19 @@ def play(grid):
 
 def undo(grid):
     lastTurn = grid.turn - 1
-    for p in grid.memory.usedPieces[lastTurn]:
-        xy = p.turn.get(lastTurn)
-        grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
-        if p.turnTaken == lastTurn:
-            p.turnTaken = 0;
-        if p.king == lastTurn:
-            p.king == 0
+    grid.ForcedPieces.clear()
+    grid.DoubleTakes.clear()
+    grid.emptyValids()
     grid.turn -= 1
+    for p in grid.memory.usedPieces[lastTurn]:
+        if lastTurn in p.turn:
+            xy = p.turn.get(lastTurn)
+            grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
+        if p.turnTaken == lastTurn:
+            p.turnTaken = 0
+            grid.squares[p.xy[0]][p.xy[1]] = p
+        if p.king == lastTurn:
+            p.king = 0
     grid.player *= -1
     play(grid)
 

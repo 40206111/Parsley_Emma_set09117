@@ -8,7 +8,6 @@ class Memory:
         self.whitePieces = whitePieces
         self.allPieces = blackPieces + whitePieces
         self.usedPieces = []
-        self.usedPieces.append([])
         self.turn = 0
 
     def setPieces(self, blackPieces, whitePieces):

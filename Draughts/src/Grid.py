@@ -248,6 +248,7 @@ class Grid:
         self.squares[y][x] = self.blackSpace
         # complete move as normal
         self.normalMove(start1, start2, y + (y-start1), x + (x - start2))
+        self.memory.updateUsed(self.squares[y + (y-start1)][x + (x - start2)], self.turn)
 
     # method for completing move if you can take
     def completeTakes(self, start1, start2, end1, end2):
