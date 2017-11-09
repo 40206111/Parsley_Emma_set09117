@@ -1,12 +1,17 @@
 from Grid import Grid
+from AI import AI
+
 
 __author__ = 'Emma'
 __project__ = 'Draughts'
 
 
 class Settings:
-    def __init__(self, grid):
+    def __init__(self, grid, coms):
         self.grid = grid
+        self.com1 = AI(grid, 1)
+        self.com2 = AI(grid, -1)
+        self.coms = coms
 
     # define Draughts rules
     def rules(self):
@@ -236,30 +241,43 @@ class Settings:
 
     # general settings
     def settings(self):
-        # print settings options
-        print("\nSettings:\n")
-        print("1. See Board Settings")
-        print("2. See Piece settings")
-        print("3. Two Player: On  (Changing this setting will reset your game)")
-        print("4. Back")
-
         # initialise done to false
         done = False
         # do while not done
         while not done:
+            # print settings options
+            print("\nSettings:\n")
+            print("1. See Board Settings")
+            print("2. See Piece settings")
+            print("3. Players:", end=" ")
+            if self.coms == 0:
+                print("2 Humans")
+            else:
+                print(str(self.coms) + " Com(s)")
+            if self.coms == 1:
+                if self.com1.player == 1:
+                    print("4. Com Player: 1")
+                else:
+                    print("4. Com Player: 2")
+                print("5. Back")
+            else:
+                print("4. Back")
+
             # set theIn to input
             theIn = input("enter number: ")
             # board settings
             if theIn == "1":
-                done = True
                 self.boardSets(False)
             # piece settings
             elif theIn == '2':
-                done = True
                 self.pieceSets()
             # toggle 2 players
             elif theIn == '3':
-                print("This Setting cannot be changed yet")
+                self.coms += 1
+                if self.coms > 2:
+                    self.coms = 0
+            elif theIn == '4' and self.coms == 1:
+                self.com1.player *= -1
             # back to menu
-            elif theIn == '4':
+            elif theIn == '4' or (theIn == '5' and self.coms == 1):
                 done = True

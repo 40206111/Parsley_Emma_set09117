@@ -393,7 +393,7 @@ def undo(grid):
 def main():
     # create grid of width and height
     grid = Grid(8, 8, 3)
-    settings = Settings(grid)
+    settings = Settings(grid, 1)
 
     # print rules
     settings.rules()
