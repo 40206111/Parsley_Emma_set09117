@@ -15,7 +15,7 @@ def menu(grid, settings):
     # do while not done
     while not done:
         theIn = ""
-        if (grid.memory.turn > 0):
+        if grid.memory.turn > 0:
             theIn = input("Play, Replay, NewGame, Rules, Exit: ")
         else:
             # set theIn to input
@@ -31,18 +31,7 @@ def menu(grid, settings):
             grid.createGrid()
             play(grid)
         elif theIn == "replay" and grid.memory.turn > 0:
-            for i in range(grid.turn, 0, -1):
-                undo(grid)
-            grid.printGrid()
-            while True:
-                input("press enter to continue: ")
-                redo(grid)
-                grid.printGrid()
-                if grid.turn >= grid.memory.turn:
-                    break
-            print("REPLAY FINISHED")
-            input("press enter to go back to menu")
-
+            replay(grid)
         # view settings
         elif theIn == "settings":
             settings.settings()
@@ -294,6 +283,9 @@ def play(grid):
             print()
             grid.printGrid()
             print("\nPLAYER 1 WINS!\n")
+            theIn = input("Would you like to replay your game now(y/n): ").lower()
+            if  theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
+                replay(grid)
             break
         elif len(grid.whitePieces) == 0:
             print()
@@ -328,6 +320,20 @@ def play(grid):
             grid.memory.turn += 1
         # increase turn
         grid.turn += 1
+
+
+def replay(grid):
+        for i in range(grid.turn, 0, -1):
+            undo(grid)
+        grid.printGrid()
+        while True:
+            input("press enter to continue: ")
+            redo(grid)
+            grid.printGrid()
+            if grid.turn >= grid.memory.turn:
+                break
+        print("REPLAY FINISHED")
+        input("press enter to go back to menu")
 
 
 def redo(grid):
