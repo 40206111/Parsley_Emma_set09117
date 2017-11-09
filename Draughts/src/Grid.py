@@ -318,7 +318,7 @@ class Grid:
                 elif start1 in range(0, self.height) and start2 in range(0, self.width):
                     try:
                         # if piece is in the right direction or can take both ways
-                        if i == piece.player or piece.king:
+                        if i != piece.player or piece.king:
                             # if there is the opponents piece
                             if -piece.player == self.squares[start1 + i][start2 + j].player and (start1 + i, start2 + j) not in jumped:
                                 # if space is valid

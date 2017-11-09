@@ -103,8 +103,14 @@ def move(grid, starty, startx):
         # set theIn to input
         theIn = input("): ")
         # check if player wanted to cancel
-        if theIn.lower() == "cancel" and not grid.more:
+        if (theIn.lower() == "cancel" or theIn.lower() == "undo") and not grid.more:
             # set done to true
+            done = True
+        elif theIn.lower() == "undo" and grid.more:
+            grid.more = False
+            grid.turn += 1
+            undo(grid)
+            grid.turn -= 1
             done = True
         # if player wants to finish there move and they have already moved
         elif theIn.lower() == "no" and grid.more:
@@ -196,11 +202,9 @@ def forceTakeMove(grid):
                     # move piece
                     move(grid, y, x)
                     # check if piece was moved
-                    if grid.validPlaces or grid.ForcedPieces:
+                    if grid.validPlaces:
                         # empty valid pieces
                         grid.emptyValids()
-                        # empty pieces that could be forced to take
-                        grid.ForcedPieces.clear()
                     else:
                         return False
         except:
