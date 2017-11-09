@@ -14,8 +14,12 @@ def menu(grid, settings):
     done = False
     # do while not done
     while not done:
-        # set theIn to input
-        theIn = input("Play, NewGame, Settings, Rules, Exit: ")
+        theIn = ""
+        if (grid.memory.turn > 0):
+            theIn = input("Play, Replay, NewGame, Rules, Exit: ")
+        else:
+            # set theIn to input
+            theIn = input("Play, NewGame, Settings, Rules, Exit: ")
         # make theIn lowercase
         theIn = theIn.lower()
         # play game
@@ -26,6 +30,19 @@ def menu(grid, settings):
             # reset grid
             grid.createGrid()
             play(grid)
+        elif theIn == "replay" and grid.memory.turn > 0:
+            for i in range(grid.turn, 0, -1):
+                undo(grid)
+            grid.printGrid()
+            while True:
+                input("press enter to continue: ")
+                redo(grid)
+                grid.printGrid()
+                if grid.turn >= grid.memory.turn:
+                    break
+            print("REPLAY FINISHED")
+            input("press enter to go back to menu")
+
         # view settings
         elif theIn == "settings":
             settings.settings()
@@ -269,10 +286,20 @@ def choosePiece(grid):
 def play(grid):
     print()
 
-    # initialise done to false
-    done = False
     # do while not done
-    while not done:
+    while True:
+
+                # check if anyone has Won
+        if len(grid.blackPieces) == 0:
+            print()
+            grid.printGrid()
+            print("\nPLAYER 1 WINS!\n")
+            break
+        elif len(grid.whitePieces) == 0:
+            print()
+            grid.printGrid()
+            print("\nPLAYER 2 WINS\n")
+            break
 
         # print the player who's turn it is
         if grid.player == 1:
@@ -291,23 +318,11 @@ def play(grid):
             done = choosePiece(grid)
         else:
             done = forceTakeMove(grid)
+        if done:
+            break
 
-        # check if anyone has Won
-        if len(grid.blackPieces) == 0:
-            print()
-            grid.printGrid()
-            print("\nPLAYER 1 WINS!\n")
-            done = True
-            grid.createGrid()
-        elif len(grid.whitePieces) == 0:
-            print()
-            grid.printGrid()
-            print("\nPLAYER 2 WINS\n")
-            done = True
-            grid.createGrid()
-        else:
-            # change player
-            grid.player *= -1
+        # change player
+        grid.player *= -1
 
         if grid.memory.turn == grid.turn:
             grid.memory.turn += 1
