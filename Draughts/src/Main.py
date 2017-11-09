@@ -317,6 +317,10 @@ def undo(grid):
         if p.turnTaken == lastTurn:
             p.turnTaken = 0
             grid.squares[p.xy[0]][p.xy[1]] = p
+            if p.player == 1:
+                grid.whitePieces.append(p)
+            else:
+                grid.blackPieces.append(p)
         if p.king == lastTurn:
             p.king = 0
     grid.player *= -1
