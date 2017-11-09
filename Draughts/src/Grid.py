@@ -253,7 +253,6 @@ class Grid:
         self.squares[y][x] = self.blackSpace
         # complete move as normal
         self.normalMove(start1, start2, y + (y-start1), x + (x - start2))
-        self.memory.updateUsed(self.squares[y + (y-start1)][x + (x - start2)], self.turn)
 
     # method for completing move if you can take
     def completeTakes(self, start1, start2, end1, end2):
@@ -271,6 +270,7 @@ class Grid:
                 multi = True
             else:
                 self.jumpPiece(player, start1, start2, y, x)
+                self.memory.updateUsed(self.squares[y + (y-start1)][x + (x - start2)], self.turn)
                 # clear forced pieces
                 self.ForcedPieces.clear()
                 # clear double takes
@@ -297,6 +297,8 @@ class Grid:
                         b = p[1] + (p[1] - b)
                         # print grid
                         self.printGrid()
+                    self.memory.updateUsed(self.squares[a][b], self.turn)
+                    self.squares[a][b].turn.update({self.turn: (start1, start2)})
                     # clear forced pieces
                     self.ForcedPieces.clear()
                     # clear double takes

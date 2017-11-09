@@ -281,8 +281,7 @@ def play(grid):
 
     # do while not done
     while True:
-
-                # check if anyone has Won
+        # check if anyone has Won
         if len(grid.blackPieces) == 0:
             print()
             grid.printGrid()
