@@ -57,7 +57,7 @@ class Grid:
         # Create list of grid squares variable
         self.squares = []
 
-        self.memory = Memory(self.blackPieces, self.whitePieces)
+        self.memory = Memory()
         # Create Grid
         self.createGrid()
 
@@ -144,7 +144,7 @@ class Grid:
                     self.usableSquares.update([(i, j)])
         self.memory.turn = 0
         self.turn = 0
-        self.memory.setPieces(self.blackPieces, self.whitePieces)
+        self.memory.setPieces()
 
     # print grid method
     def printGrid(self):

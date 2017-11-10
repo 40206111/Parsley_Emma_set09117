@@ -3,11 +3,11 @@ from Piece import Piece
 
 class Memory:
 
-    def __init__(self, blackPieces, whitePieces):
+    def __init__(self):
         self.usedPieces = []
         self.turn = 0
 
-    def setPieces(self, blackPieces, whitePieces):
+    def setPieces(self):
         self.usedPieces.clear()
 
     def updateUsed(self, piece, turn):

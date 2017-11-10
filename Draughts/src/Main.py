@@ -289,6 +289,9 @@ def play(grid, settings):
             print()
             grid.printGrid()
             print("\nPLAYER 2 WINS\n")
+            theIn = input("Would you like to replay your game now(y/n): ").lower()
+            if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
+                replay(grid)
             break
 
         # print the player who's turn it is
@@ -312,7 +315,25 @@ def play(grid, settings):
 
             # if player doesn't have forced takes move normally
             if not grid.ForcedPieces:
-                done = choosePiece(grid)
+                if grid.player == 1:
+                    for p in grid.whitePieces:
+                        grid.FindValids(p.xy[0], p.xy[1])
+                else:
+                    for p in grid.blackPieces:
+                        grid.FindValids(p.xy[0], p.xy[1])
+                if grid.validPlaces:
+                    grid.emptyValids()
+                    done = choosePiece(grid)
+                else:
+                    print("NO LEGAL MOVES")
+                    if grid.player == 1:
+                        print("PLAYER 2 WINS!")
+                    else:
+                        print("PLAYER 1 WINS")
+                    theIn = input("Would you like to replay your game now(y/n): ").lower()
+                    if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
+                        replay(grid)
+                    break
             else:
                 done = forceTakeMove(grid)
         if not done:
@@ -384,8 +405,12 @@ def undo(grid):
                 grid.squares[p.xy[0]][p.xy[1]] = p
                 if p.player == 1:
                     grid.whitePieces.append(p)
+                    p.col = grid.whitePiece
+                    p.kingLetter = grid.whiteKing
                 else:
                     grid.blackPieces.append(p)
+                    p.col = grid.blackPiece
+                    p.kingLetter = grid.blackKing
             if p.king == lastTurn:
                 p.king = 0
         grid.player *= -1
