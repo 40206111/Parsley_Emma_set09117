@@ -15,7 +15,7 @@ def menu(grid, settings):
     # do while not done
     while not done:
         if grid.memory.turn > 0:
-            theIn = input("Play, Replay, NewGame, Rules, Exit: ")
+            theIn = input("Play, Replay, NewGame, Settings, Rules, Exit: ")
         else:
             # set theIn to input
             theIn = input("Play, NewGame, Settings, Rules, Exit: ")
