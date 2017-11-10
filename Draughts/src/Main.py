@@ -160,7 +160,7 @@ def forceTakeMove(grid):
     grid.printGrid()
     print()
     # print instruction
-    print("\nType \"Quit\" to quit")
+    print("\nType \"Quit\" to quit, undo to undo, or redo to redo")
     print("FORCE TAKE:\nYou are able to take at least one of your enemies pieces.\nPlease input one of the following:")
     # output coordinates of all pieces that can take
     for f in grid.ForcedPieces:
@@ -218,7 +218,7 @@ def choosePiece(grid):
     grid.printGrid()
     print()
     # print instruction
-    print("\nType \"Quit\" to quit")
+    print("\nType \"Quit\" to quit, undo to undo, or redo to redo")
     # set theIn to input
     theIn = input("Input coordinates of piece you would like to move: ")
     if theIn.lower() == "undo":
