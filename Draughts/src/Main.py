@@ -14,7 +14,6 @@ def menu(grid, settings):
     done = False
     # do while not done
     while not done:
-        theIn = ""
         if grid.memory.turn > 0:
             theIn = input("Play, Replay, NewGame, Rules, Exit: ")
         else:
@@ -31,7 +30,7 @@ def menu(grid, settings):
             grid.createGrid()
             play(grid, settings)
         elif theIn == "replay" and grid.memory.turn > 0:
-            replay(grid, settings)
+            replay(grid)
         # view settings
         elif theIn == "settings":
             settings.settings()
@@ -320,10 +319,10 @@ def play(grid, settings):
             # change player
             grid.player *= -1
 
-        if grid.memory.turn == grid.turn:
-            grid.memory.turn += 1
-            # increase turn
-            grid.turn += 1
+            if grid.memory.turn == grid.turn:
+                grid.memory.turn += 1
+                # increase turn
+                grid.turn += 1
         elif done and done != 2:
             break
 
