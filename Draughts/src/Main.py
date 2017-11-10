@@ -308,9 +308,15 @@ def play(grid, settings):
 
         if settings.coms > 0:
             if grid.player == settings.com1.player:
-                settings.com1.calculateMove()
+                if grid.turn == grid.memory.turn:
+                    settings.com1.calculateMove()
+                else:
+                    redo()
             elif settings.coms == 2 and grid.player == settings.com2.player:
-                settings.com2.calculateMove()
+                if grid.turn == grid.memory.turn:
+                    settings.com2.calculateMove()
+                else:
+                    redo()
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
 
             # if player doesn't have forced takes move normally
