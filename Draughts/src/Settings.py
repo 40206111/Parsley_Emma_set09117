@@ -18,7 +18,7 @@ class Settings:
         # rules printed based on the board settings
         print("\nRULES:", end="\n\n")
         print("Player 1: ", end="")
-        if self.coms > 0 and self.com1.player == 1:
+        if (self.coms > 0 and self.com1.player == 1) or self.coms == 2:
             print("COMPUTER")
         else:
             print("HUMAN")

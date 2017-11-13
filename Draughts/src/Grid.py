@@ -478,7 +478,7 @@ class Grid:
                 if lastTurn in p.turn:
                     xy = p.turn.get(lastTurn)
                     self.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
-                if p.turnTaken == lastTurn:
+                if lastTurn != 0 and p.turnTaken == lastTurn:
                     p.turnTaken = 0
                     self.squares[p.xy[0]][p.xy[1]] = p
                     if p.player == 1:
