@@ -300,12 +300,6 @@ def play(grid, settings):
         else:
             print("\nPLAYER 2's TURN (" + grid.blackPiece + ")")
 
-        # check if current player has any forced takes
-        if grid.player == 1:
-            checkForTakes(grid, grid.whitePieces)
-        else:
-            checkForTakes(grid, grid.blackPieces)
-
         done = False
         if settings.coms > 0:
             if grid.player == settings.com1.player:
@@ -327,6 +321,11 @@ def play(grid, settings):
                     input("press enter to continue")
 
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
+            # check if current player has any forced takes
+            if grid.player == 1:
+                checkForTakes(grid, grid.whitePieces)
+            else:
+                checkForTakes(grid, grid.blackPieces)
 
             # if player doesn't have forced takes move normally
             if not grid.ForcedPieces:
