@@ -466,8 +466,6 @@ class Grid:
                     self.validPlaces.update([(i, x + j)])
 
     def undo(self):
-        print(self.turn)
-        print(self.memory.turn)
         if self.turn == 0:
             print("NO MORE UNDOs")
         else:
@@ -494,5 +492,3 @@ class Grid:
                 if p.king == lastTurn:
                     p.king = 0
             self.player *= -1
-        print(self.turn)
-        print(self.memory.turn)

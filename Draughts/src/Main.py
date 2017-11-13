@@ -306,17 +306,26 @@ def play(grid, settings):
         else:
             checkForTakes(grid, grid.blackPieces)
 
+        done = False
         if settings.coms > 0:
             if grid.player == settings.com1.player:
-                if grid.turn == grid.memory.turn:
+                theIn = ""
+                if settings.coms != 2 and grid.turn != 0:
+                    grid.printGrid()
+                    theIn = input("Type undo to undo last move: ")
+                if theIn.lower() == "undo":
+                    grid.undo()
+                elif grid.turn == grid.memory.turn:
                     settings.com1.calculateMove()
+                    if settings.coms == 2:
+                        input("press enter to continue")
                 else:
-                    redo()
+                    redo(grid)
             elif settings.coms == 2 and grid.player == settings.com2.player:
                 if grid.turn == grid.memory.turn:
                     settings.com2.calculateMove()
-                else:
-                    redo()
+                    input("press enter to continue")
+
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
 
             # if player doesn't have forced takes move normally
