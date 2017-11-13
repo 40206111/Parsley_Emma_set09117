@@ -108,7 +108,7 @@ def move(grid, starty, startx):
         elif theIn.lower() == "undo" and grid.more:
             grid.more = False
             grid.turn += 1
-            undo(grid)
+            grid.undo()
             grid.turn -= 1
             done = True
         # if player wants to finish there move and they have already moved
@@ -169,7 +169,7 @@ def forceTakeMove(grid):
     # set theIn to input
     theIn = input("Input: ")
     if theIn.lower() == "undo":
-        undo(grid)
+        grid.undo()
         return 2
     elif theIn.lower() == "redo":
         redo(grid)
@@ -222,7 +222,7 @@ def choosePiece(grid):
     # set theIn to input
     theIn = input("Input coordinates of piece you would like to move: ")
     if theIn.lower() == "undo":
-        undo(grid)
+        grid.undo()
         return 2
     elif theIn.lower() == "redo":
         redo(grid)
@@ -348,15 +348,15 @@ def play(grid, settings):
 
             if grid.memory.turn == grid.turn:
                 grid.memory.turn += 1
-                # increase turn
-                grid.turn += 1
+            # increase turn
+            grid.turn += 1
         elif done and done != 2:
             break
 
 
 def replay(grid):
         for i in range(grid.turn, 0, -1):
-            undo(grid)
+            grid.undo()
         grid.printGrid()
         while True:
             input("press enter to continue: ")
@@ -372,7 +372,6 @@ def redo(grid):
     nextTurn = grid.turn
     if nextTurn >= grid.memory.turn:
         print("NO MORE REDOs")
-        play(grid)
     else:
         grid.ForcedPieces.clear()
         grid.DoubleTakes.clear()
@@ -389,36 +388,6 @@ def redo(grid):
                     grid.blackPieces.remove(p)
                 grid.squares[p.xy[0]][p.xy[1]] = grid.blackSpace
         grid.turn += 1
-        grid.player *= -1
-
-
-def undo(grid):
-    if grid.turn == 0:
-        print("NO MORE UNDOs")
-        play(grid)
-    else:
-        lastTurn = grid.turn - 1
-        grid.ForcedPieces.clear()
-        grid.DoubleTakes.clear()
-        grid.emptyValids()
-        grid.turn -= 1
-        for p in grid.memory.usedPieces[lastTurn]:
-            if lastTurn in p.turn:
-                xy = p.turn.get(lastTurn)
-                grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
-            if p.turnTaken == lastTurn:
-                p.turnTaken = 0
-                grid.squares[p.xy[0]][p.xy[1]] = p
-                if p.player == 1:
-                    grid.whitePieces.append(p)
-                    p.col = grid.whitePiece
-                    p.kingLetter = grid.whiteKing
-                else:
-                    grid.blackPieces.append(p)
-                    p.col = grid.blackPiece
-                    p.kingLetter = grid.blackKing
-            if p.king == lastTurn:
-                p.king = 0
         grid.player *= -1
 
 

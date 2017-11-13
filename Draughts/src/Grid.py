@@ -464,3 +464,35 @@ class Grid:
                     self.squares[i][x + j] = self.validSpace
                     # add grid space to valid spaces
                     self.validPlaces.update([(i, x + j)])
+
+    def undo(self):
+        print(self.turn)
+        print(self.memory.turn)
+        if self.turn == 0:
+            print("NO MORE UNDOs")
+        else:
+            lastTurn = self.turn - 1
+            self.ForcedPieces.clear()
+            self.DoubleTakes.clear()
+            self.emptyValids()
+            self.turn -= 1
+            for p in self.memory.usedPieces[lastTurn]:
+                if lastTurn in p.turn:
+                    xy = p.turn.get(lastTurn)
+                    self.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
+                if p.turnTaken == lastTurn:
+                    p.turnTaken = 0
+                    self.squares[p.xy[0]][p.xy[1]] = p
+                    if p.player == 1:
+                        self.whitePieces.append(p)
+                        p.col = self.whitePiece
+                        p.kingLetter = self.whiteKing
+                    else:
+                        self.blackPieces.append(p)
+                        p.col = self.blackPiece
+                        p.kingLetter = self.blackKing
+                if p.king == lastTurn:
+                    p.king = 0
+            self.player *= -1
+        print(self.turn)
+        print(self.memory.turn)
