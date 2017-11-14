@@ -299,19 +299,37 @@ def play(grid, settings):
                 replay(grid)
             break
 
-        # print the player who's turn it is
-        if grid.player == 1:
-            print("\nPLAYER 1's TURN (" + grid.whitePiece + ")")
-        else:
-            print("\nPLAYER 2's TURN (" + grid.blackPiece + ")")
-
         # check if current player has any forced takes
         if grid.player == 1:
             checkForTakes(grid, grid.whitePieces)
         else:
             checkForTakes(grid, grid.blackPieces)
 
-        done = False
+        if not grid.ForcedPieces:
+            if grid.player == 1:
+                for p in grid.whitePieces:
+                    grid.FindValids(p.xy[0], p.xy[1])
+            else:
+                for p in grid.blackPieces:
+                    grid.FindValids(p.xy[0], p.xy[1])
+            if not grid.validPlaces:
+                print("NO LEGAL MOVES")
+                if grid.player == 1:
+                    print("PLAYER 2 WINS!")
+                else:
+                    print("PLAYER 1 WINS")
+                theIn = input("Would you like to replay your game now(y/n): ").lower()
+                if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
+                    replay(grid)
+                break
+            grid.emptyValids()
+
+        # print the player who's turn it is
+        if grid.player == 1:
+            print("\nPLAYER 1's TURN (" + grid.whitePiece + ")")
+        else:
+            print("\nPLAYER 2's TURN (" + grid.blackPiece + ")")
+
         if settings.coms > 0:
             if grid.player == settings.com1.player:
                 theIn = ""
@@ -331,30 +349,14 @@ def play(grid, settings):
                     settings.com2.calculateMove()
                     input("press enter to continue")
 
+        done = False
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
             # if player doesn't have forced takes move normally
             if not grid.ForcedPieces:
-                if grid.player == 1:
-                    for p in grid.whitePieces:
-                        grid.FindValids(p.xy[0], p.xy[1])
-                else:
-                    for p in grid.blackPieces:
-                        grid.FindValids(p.xy[0], p.xy[1])
-                if grid.validPlaces:
-                    grid.emptyValids()
-                    done = choosePiece(grid)
-                else:
-                    print("NO LEGAL MOVES")
-                    if grid.player == 1:
-                        print("PLAYER 2 WINS!")
-                    else:
-                        print("PLAYER 1 WINS")
-                    theIn = input("Would you like to replay your game now(y/n): ").lower()
-                    if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
-                        replay(grid)
-                    break
+                done = choosePiece(grid)
             else:
                 done = forceTakeMove(grid)
+
         if not done:
             # change player
             grid.player *= -1
