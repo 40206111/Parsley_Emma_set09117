@@ -75,7 +75,6 @@ class AI:
                 for i in range(0, len(thisMove)):
                     if depth == 0:
                         self.move.append([p.xy] + thisMove[i])
-                    grid.turn += 1
                     for j in range(0, len(thisMove[i])):
                         grid.completeMove(y1, x1, thisMove[i][j][0], thisMove[i][j][1])
                         y1 = thisMove[i][j][0]
@@ -87,6 +86,7 @@ class AI:
                             thisScore[i] += min(self.minimax(depth + 1, grid, -player, [0]))
                         else:
                             thisScore[i] += max(self.minimax(depth + 1, grid, -player, [0]))
+                    grid.turn += 1
                     grid.undo()
                 score[len(score) - 1] += max(thisScore)
                 score.append(0)
