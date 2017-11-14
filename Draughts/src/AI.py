@@ -67,13 +67,25 @@ class AI:
         for p in pieces:
             if p.xy in forced:
                 thisScore, thisMove = self.takeRoute(grid, set(), [[]], [0], p, p.xy[0], p.xy[1])
+                print("THEMOVES")
+                print(thisScore)
+                print(thisMove)
                 y1 = p.xy[0]
                 x1 = p.xy[1]
+                print("START")
+                grid.printGrid()
+                print(p.xy)
                 for i in range(0, len(thisMove)):
                     if depth == 0:
                         self.move.append([p.xy] + thisMove[i])
                     for j in range(0, len(thisMove[i])):
+                        print(thisMove[i])
+                        print(player)
+                        print(grid.squares[p.xy[0]][p.xy[1]])
+                        print((y1, x1))
+                        grid.printGrid()
                         grid.completeMove(y1, x1, thisMove[i][j][0], thisMove[i][j][1])
+                        grid.printGrid()
                         y1 = thisMove[i][j][0]
                         x1 = thisMove[i][j][1]
                     grid.turn += 1
@@ -85,6 +97,10 @@ class AI:
                         else:
                             thisScore[i] += max(self.minimax(depth + 1, grid, -player, [0]))
                     grid.undo()
+                    del grid.memory.usedPieces[grid.turn]
+                    y1 = p.xy[0]
+                    x1 = p.xy[1]
+
                 score[len(score) - 1] += max(thisScore)
                 score.append(0)
             elif not forced:
@@ -132,14 +148,32 @@ class AI:
                                                 (y + i + i) == 0 and piece.player == -1)):
                                     score[len(score) - 1] += self.kingScore * piece.player
                                 move[len(move) - 1].append((y + i + i, x + j + j))
+                                print(move)
                                 score[len(score) - 1] += self.takeScore * piece.player
+                                print(score)
                                 score, unneeded = self.takeRoute(grid, jumped, move, score, piece, y + i + i, x + j + j)
                                 if score[len(score) - 1] != 0:
                                     score.append(0)
-                                    move.append([])
+                                    if move[len(move[len(move) - 2]) - 1] == move[len(move) - 1]:
+                                        print(len(move))
+                                        print(move.append(move[len(move) - 1][len(jumped) -1 :]))
+                                        move.append(move[len(move) - 2])
+                                    else:
+                                        move.append([])
+
                     except:
                         pass
+        print(move)
+        print(score)
         if score[len(score) - 1] == 0:
             del score[len(score) - 1]
             del move[len(move) - 1]
+        print("pajamas")
+        print(move[len(move) - 2])
+        print(move[len(move)-1])
+        if len(move) > 1 and move[len(move) - 2] == move[len(move)-1]:
+            print("here")
+            del move[len(move)-1]
+        print("scores: " + str(score))
+        print("moves: " + str(move))
         return score, move
