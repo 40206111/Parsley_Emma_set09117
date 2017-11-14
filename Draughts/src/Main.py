@@ -23,6 +23,9 @@ def menu(grid, settings):
         theIn = theIn.lower()
         # play game
         if theIn == "play":
+            if settings.coms == 2 or (settings.coms == 1 and settings.com1.player == 1):
+                grid.printGrid()
+                input("press enter to continue")
             play(grid, settings)
         # reset grid and play
         elif theIn == "newgame":
@@ -279,7 +282,8 @@ def play(grid, settings):
         # check if anyone has Won
         if len(grid.blackPieces) == 0:
             print()
-            grid.printGrid()
+            if settings.coms == 0:
+                grid.printGrid()
             print("\nPLAYER 1 WINS!\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
             if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
@@ -287,7 +291,8 @@ def play(grid, settings):
             break
         elif len(grid.whitePieces) == 0:
             print()
-            grid.printGrid()
+            if settings.coms == 0:
+                grid.printGrid()
             print("\nPLAYER 2 WINS\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
             if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
@@ -299,6 +304,12 @@ def play(grid, settings):
             print("\nPLAYER 1's TURN (" + grid.whitePiece + ")")
         else:
             print("\nPLAYER 2's TURN (" + grid.blackPiece + ")")
+
+        # check if current player has any forced takes
+        if grid.player == 1:
+            checkForTakes(grid, grid.whitePieces)
+        else:
+            checkForTakes(grid, grid.blackPieces)
 
         done = False
         if settings.coms > 0:
@@ -321,12 +332,6 @@ def play(grid, settings):
                     input("press enter to continue")
 
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
-            # check if current player has any forced takes
-            if grid.player == 1:
-                checkForTakes(grid, grid.whitePieces)
-            else:
-                checkForTakes(grid, grid.blackPieces)
-
             # if player doesn't have forced takes move normally
             if not grid.ForcedPieces:
                 if grid.player == 1:
