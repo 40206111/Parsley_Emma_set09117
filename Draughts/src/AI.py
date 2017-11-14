@@ -11,7 +11,7 @@ class AI:
         self.win = 100
         self.takes = []
         self.move = []
-        self.depth = 1
+        self.depth = 2
 
     def minIndex(self, theList):
         minimum = theList[0]
@@ -33,8 +33,6 @@ class AI:
 
     def calculateMove(self):
         newGrid = copy.deepcopy(self.grid)
-        #newGrid.turn += 1
-        that = [0]
         if self.player == 1:
             index = self.maxIndex(self.minimax(0, newGrid, self.player, [0]))
         else:
@@ -53,7 +51,6 @@ class AI:
             y = y2
             x = x2
         self.move.clear()
-
 
     def minimax(self, depth, grid, player, score):
         if self.depth != depth:
@@ -79,6 +76,7 @@ class AI:
                         grid.completeMove(y1, x1, thisMove[i][j][0], thisMove[i][j][1])
                         y1 = thisMove[i][j][0]
                         x1 = thisMove[i][j][1]
+                    grid.turn += 1
                     if len(otherpieces) == 0:
                         thisScore[i] += self.win * player
                     else:
@@ -86,7 +84,6 @@ class AI:
                             thisScore[i] += min(self.minimax(depth + 1, grid, -player, [0]))
                         else:
                             thisScore[i] += max(self.minimax(depth + 1, grid, -player, [0]))
-                    grid.turn += 1
                     grid.undo()
                 score[len(score) - 1] += max(thisScore)
                 score.append(0)
