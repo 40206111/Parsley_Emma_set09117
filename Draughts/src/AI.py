@@ -18,7 +18,7 @@ class AI:
         # list of possible moves for this turn
         self.move = []
         # amount of turns it looks at before deciding it's move
-        self.depth = 1
+        self.depth = 3
 
     # return index of smallest value in list
     def minIndex(self, theList):
@@ -115,7 +115,7 @@ class AI:
                 # calculate take tree
                 takeTree = self.takeRoute(grid, set(), takeTree, p, p.xy[0], p.xy[1])
                 # calculate scores for take tree
-                score += self.moveThroughTreeNodes(takeTree, grid, score, otherpieces, player, depth)
+                self.moveThroughTreeNodes(takeTree, grid, score, otherpieces, player, depth)
                 # set last score to 0
                 score[len(score) - 1] = 0
             # if pieces have not been forced to take
@@ -179,7 +179,7 @@ class AI:
             # delete last turn from memory
             del grid.memory.usedPieces[grid.turn]
             # take away node score from last score
-            score[len(score) - 1] -= t.score
+            score[len(score) - 1] -= treeRoute.score
             # if depth is 0 remove nodes from last move
             if depth == 0:
                 if len(self.move[len(self.move) - 1]) > 1:
