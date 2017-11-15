@@ -1,4 +1,6 @@
 from Grid import Grid
+from Memory import Tree
+
 import copy
 
 
@@ -33,13 +35,19 @@ class AI:
 
     def calculateMove(self):
         newGrid = copy.deepcopy(self.grid)
+        newGrid.turn = 0
+        newGrid.memory.usedPieces.clear()
         if self.player == 1:
             index = self.maxIndex(self.minimax(0, newGrid, self.player, [0]))
         else:
             index = self.minIndex(self.minimax(0, newGrid, self.player, [0]))
 
+        print(self.move)
+        print(index)
+        print(self.move[index])
         y = self.move[index][0][0]
         x = self.move[index][0][1]
+        print(self.move[index])
         for i in range(1, len(self.move[index])):
             y2 = self.move[index][i][0]
             x2 = self.move[index][i][1]
@@ -66,46 +74,23 @@ class AI:
         forced = copy.copy(grid.ForcedPieces)
         for p in pieces:
             if p.xy in forced:
-                thisScore, thisMove = self.takeRoute(grid, set(), [[]], [0], p, p.xy[0], p.xy[1])
-                print("THEMOVES")
-                print(thisScore)
-                print(thisMove)
-                y1 = p.xy[0]
-                x1 = p.xy[1]
-                print("START")
-                grid.printGrid()
-                print(p.xy)
-                for i in range(0, len(thisMove)):
-                    if depth == 0:
-                        self.move.append([p.xy] + thisMove[i])
-                    for j in range(0, len(thisMove[i])):
-                        print(thisMove[i])
-                        print(player)
-                        print(grid.squares[p.xy[0]][p.xy[1]])
-                        print((y1, x1))
-                        grid.printGrid()
-                        grid.completeMove(y1, x1, thisMove[i][j][0], thisMove[i][j][1])
-                        grid.printGrid()
-                        y1 = thisMove[i][j][0]
-                        x1 = thisMove[i][j][1]
-                    grid.turn += 1
-                    if len(otherpieces) == 0:
-                        thisScore[i] += self.win * player
-                    else:
-                        if player == 1:
-                            thisScore[i] += min(self.minimax(depth + 1, grid, -player, [0]))
-                        else:
-                            thisScore[i] += max(self.minimax(depth + 1, grid, -player, [0]))
-                    grid.undo()
-                    del grid.memory.usedPieces[grid.turn]
-                    y1 = p.xy[0]
-                    x1 = p.xy[1]
+                if depth == 0:
+                    print(self.move)
+                    self.move.append([p.xy])
+                treeRoute = Tree(p.xy)
+                treeRoute = self.takeRoute(grid, set(), treeRoute, p, p.xy[0], p.xy[1])
+                thisScore = self.moveThroughTreeNodes(treeRoute, grid, score, otherpieces, player, depth)
+                del thisScore[-1]
 
-                score[len(score) - 1] += max(thisScore)
+                if player == 1:
+                    score[len(score) - 1] += max(thisScore)
+                else:
+                    score[len(score) - 1] += max(thisScore)
                 score.append(0)
             elif not forced:
                 grid.FindValids(p.xy[0], p.xy[1])
                 if grid.validPlaces:
+
                     tempv = copy.copy(grid.validPlaces)
                     for v in tempv:
                         if depth == 0:
@@ -127,14 +112,64 @@ class AI:
             score[len(score) - 1] -= self.win * player
         return score
 
-    def takeRoute(self, grid, jumped, move, score, piece, y, x):
+    def moveThroughTreeNodes(self, treeRoute, grid, score, otherpieces, player, depth):
+        for t in treeRoute.nodes:
+            if depth == 0:
+                print("nyam")
+                print(self.move)
+                self.move[len(self.move) - 1].append(t.value)
+                print(self.move)
+            grid.printGrid()
+            print(grid.turn)
+            print(treeRoute.value)
+            print(t.value)
+            grid.completeMove(treeRoute.value[0], treeRoute.value[1], t.value[0], t.value[1])
+            print("AFTERMOVE")
+            grid.printGrid
+            grid.turn += 1
+            score[len(score) - 1] += t.score
+            score = self.moveThroughTreeNodes(t, grid, score, otherpieces, player, depth)
+            print("USIED")
+            print(grid.turn)
+            print(grid.memory.usedPieces)
+            grid.undo()
+            del grid.memory.usedPieces[grid.turn]
+            score[len(score) - 1] -= t.score
+            if depth == 0:
+                print("del")
+                print(self.move)
+                if len(self.move[len(self.move) - 1]) > 1:
+                    del self.move[len(self.move) - 1][-1]
+                else:
+                    del self.move[len(self.move) - 1]
+                print(self.move)
+
+
+        if not treeRoute.nodes:
+            if len(otherpieces) == 0:
+                score[len(score) - 1] += self.win * player
+            else:
+                score.append(score[len(score) - 1] - treeRoute.score)
+                if depth == 0:
+                    print("app")
+                    print(self.move)
+                    self.move.append(self.move[len(self.move) - 1][:-1])
+                    print(self.move)
+
+                if player == 1:
+                    score[len(score) - 2] += min(self.minimax(depth + 1, grid, -player, [0]))
+                else:
+                    score[len(score) - 2] += min(self.minimax(depth + 1, grid, -player, [0]))
+
+        return score
+
+    def takeRoute(self, grid, jumped, move, piece, y, x):
         if piece.king:
             a = -1
             b = 2
         else:
             a = -piece.player
             b = -piece.player + 1
-
         for i in range(a, b, 2):
             for j in range(-1, 2, 2):
                 if y + i + i in range(0, grid.height) and x + j + j in range(0, grid.width):
@@ -143,37 +178,13 @@ class AI:
                             if grid.testAvailable(y + i + i, x + j + j) and \
                                             (y + i, x + j) not in jumped:
                                 jumped.add((y + i, x + j))
-
+                                move.nodes.append(Tree((y + i + i, x + j + j)))
                                 if not piece.king and (((y + i + i) == grid.height and piece.player == 1) or (
                                                 (y + i + i) == 0 and piece.player == -1)):
-                                    score[len(score) - 1] += self.kingScore * piece.player
-                                move[len(move) - 1].append((y + i + i, x + j + j))
-                                print(move)
-                                score[len(score) - 1] += self.takeScore * piece.player
-                                print(score)
-                                score, unneeded = self.takeRoute(grid, jumped, move, score, piece, y + i + i, x + j + j)
-                                if score[len(score) - 1] != 0:
-                                    score.append(0)
-                                    if move[len(move[len(move) - 2]) - 1] == move[len(move) - 1]:
-                                        print(len(move))
-                                        print(move.append(move[len(move) - 1][len(jumped) -1 :]))
-                                        move.append(move[len(move) - 2])
-                                    else:
-                                        move.append([])
+                                    move.nodes[len(move.nodes) - 1].score += self.kingScore * piece.player
+                                move.nodes[len(move.nodes) - 1].score += self.takeScore * piece.player
+                                self.takeRoute(grid, jumped, move.nodes[len(move.nodes) - 1], piece, y + i + i, x + j + j)
 
                     except:
                         pass
-        print(move)
-        print(score)
-        if score[len(score) - 1] == 0:
-            del score[len(score) - 1]
-            del move[len(move) - 1]
-        print("pajamas")
-        print(move[len(move) - 2])
-        print(move[len(move)-1])
-        if len(move) > 1 and move[len(move) - 2] == move[len(move)-1]:
-            print("here")
-            del move[len(move)-1]
-        print("scores: " + str(score))
-        print("moves: " + str(move))
-        return score, move
+        return move

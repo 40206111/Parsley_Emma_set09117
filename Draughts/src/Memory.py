@@ -16,3 +16,9 @@ class Memory:
         else:
             self.usedPieces.append([])
             self.usedPieces[turn].append(piece)
+
+class Tree:
+    def __init__(self, value):
+        self.nodes = []
+        self.value = value
+        self.score = 0
