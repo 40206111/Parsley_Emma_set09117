@@ -17,6 +17,11 @@ class Memory:
             self.usedPieces.append([])
             self.usedPieces[turn].append(piece)
 
+    def deleteLastMove(self):
+        for p in self.usedPieces[len(self.usedPieces) - 1]:
+            p.turn.pop(len(self.usedPieces) - 1, None)
+        del self.usedPieces[len(self.usedPieces) - 1]
+
 class Tree:
     def __init__(self, value):
         self.nodes = []

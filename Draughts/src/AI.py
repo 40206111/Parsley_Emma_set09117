@@ -18,7 +18,7 @@ class AI:
         # list of possible moves for this turn
         self.move = []
         # amount of turns it looks at before deciding it's move
-        self.depth = 3
+        self.depth = 5
 
     # return index of smallest value in list
     def minIndex(self, theList):
@@ -148,7 +148,7 @@ class AI:
                         # undo
                         grid.undo()
                         # delete last turn from memory
-                        del grid.memory.usedPieces[grid.turn]
+                        grid.memory.deleteLastMove()
         # delete last score
         del score[len(score) - 1]
         # if player cannot score other player has won
@@ -177,7 +177,7 @@ class AI:
             # undo move
             grid.undo()
             # delete last turn from memory
-            del grid.memory.usedPieces[grid.turn]
+            grid.memory.deleteLastMove()
             # take away node score from last score
             score[len(score) - 1] -= treeRoute.score
             # if depth is 0 remove nodes from last move

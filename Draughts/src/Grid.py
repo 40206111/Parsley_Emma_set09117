@@ -243,6 +243,7 @@ class Grid:
     def jumpPiece(self, player, start1, start2, y, x):
         # tell piece it has been taken
         self.squares[y][x].turnTaken = self.turn
+        self.squares[y][x].turn.pop(self.turn, None)
         self.memory.updateUsed(self.squares[y][x], self.turn)
         # if remove pieces from opposite players list
         if player == 1:
