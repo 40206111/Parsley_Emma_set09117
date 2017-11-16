@@ -7,9 +7,6 @@ class Memory:
         self.usedPieces = []
         self.turn = 0
 
-    def setPieces(self):
-        self.usedPieces.clear()
-
     def updateUsed(self, piece, turn):
         if len(self.usedPieces) == turn + 1:
             self.usedPieces[turn].append(piece)

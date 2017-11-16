@@ -144,7 +144,7 @@ class Grid:
                     self.usableSquares.update([(i, j)])
         self.memory.turn = 0
         self.turn = 0
-        self.memory.setPieces()
+        self.memory.usedPieces.clear()
 
     # print grid method
     def printGrid(self):
