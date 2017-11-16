@@ -2,6 +2,7 @@ from Grid import Grid
 from Memory import Tree
 
 import copy
+import random
 
 
 class AI:
@@ -13,7 +14,7 @@ class AI:
         self.player = player
         # set Scores for minmax calculation
         self.takeScore = 3
-        self.kingScore = 10
+        self.kingScore = 7
         self.win = 100
         # list of possible moves for this turn
         self.move = []
@@ -23,28 +24,32 @@ class AI:
     # return index of smallest value in list
     def minIndex(self, theList):
         minimum = theList[0]
-        minIndex = 0
+        minIndex = [0]
         # from second element in list onward
         for i in range(1, len(theList)):
             # check if smaller than current minimum
             if theList[i] < minimum:
                 # change minimum and minimum index
                 minimum = theList[i]
-                minIndex = i
+                minIndex = [i]
+            if theList[i] == minimum:
+                minIndex.append(i)
         # return the index of the minimum
         return minIndex
 
     # return index of largest value in list
     def maxIndex(self, theList):
         maximum = theList[0]
-        maxIndex = 0
+        maxIndex = [0]
         # from second element in list onward
         for i in range(1, len(theList)):
             # check if larger than current maximum
             if theList[i] > maximum:
                 # change maximum and maximum index
                 maximum = theList[i]
-                maxIndex = i
+                maxIndex = [i]
+            if theList[i] == maximum:
+                maxIndex.append(i)
         # return index of the minimum
         return maxIndex
 
@@ -52,12 +57,16 @@ class AI:
     def calculateMove(self):
         # copy the grid to a new grid
         newGrid = copy.deepcopy(self.grid)
+
+        scores = self.minimax(0, newGrid, self.player, [0])
+
         # index of the maximum or minimum score depending on the player
         if self.player == 1:
-            index = self.maxIndex(self.minimax(0, newGrid, self.player, [0]))
+            indexs = self.maxIndex(scores)
         else:
-            index = self.minIndex(self.minimax(0, newGrid, self.player, [0]))
+            indexs = self.minIndex(scores)
 
+        index = random.randint(0, len(indexs) - 1)
         # set y to first part of first position at index
         y = self.move[index][0][0]
         # set x to second part of first position at index
@@ -135,7 +144,7 @@ class AI:
                         grid.completeMove(p.xy[0], p.xy[1], v[0], v[1])
                         # if piece wasn't king before but is now add to score
                         if p.king and p.king == grid.turn:
-                            score[len(score) - 1] += self.kingScore
+                            score[len(score) - 1] += self.kingScore * player
                         # add turn
                         grid.turn += 1
                         # test what next players best move is and add their score to score
@@ -194,7 +203,7 @@ class AI:
                 # add win score to score
                 score[len(score) - 1] += self.win * player
                 # append new score equal to last score - this nodes score - win score
-                score.append(score[len(score) - 1] - treeRoute.score - self.win)
+                score.append(score[len(score) - 1] - treeRoute.score - (self.win * player))
             else:
                 # append new score equal to last score - this nodes score
                 score.append(score[len(score) - 1] - treeRoute.score)
