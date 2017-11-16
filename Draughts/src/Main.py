@@ -35,7 +35,7 @@ def menu(grid, settings):
             play(grid, settings)
         elif theIn == "replay" and grid.memory.turn > 0:
             print(grid.turn)
-            replay(grid)
+            grid.replay()
         # view settings
         elif theIn == "settings":
             settings.settings()
@@ -177,7 +177,7 @@ def forceTakeMove(grid):
         grid.undo()
         return 2
     elif theIn.lower() == "redo":
-        redo(grid)
+        grid.redo()
         return 2
     # check if player wants to quit
     elif theIn.lower() == "quit":
@@ -230,7 +230,7 @@ def choosePiece(grid):
         grid.undo()
         return 2
     elif theIn.lower() == "redo":
-        redo(grid)
+        grid.redo()
         return 2
     # check if player wants to quit
     elif theIn.lower() == "quit":
@@ -289,7 +289,7 @@ def play(grid, settings):
             print("\nPLAYER 1 WINS!\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
             if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
-                replay(grid)
+                grid.replay()
             break
         elif len(grid.whitePieces) == 0:
             print()
@@ -298,7 +298,7 @@ def play(grid, settings):
             print("\nPLAYER 2 WINS\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
             if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
-                replay(grid)
+                grid.replay()
             break
 
         # check if current player has any forced takes
@@ -322,7 +322,7 @@ def play(grid, settings):
                     print("PLAYER 1 WINS")
                 theIn = input("Would you like to replay your game now(y/n): ").lower()
                 if theIn == "y" or theIn == "yes" or theIn == "ok" or theIn == "go for it" or theIn == "replay":
-                    replay(grid)
+                    grid.replay()
                 break
             grid.emptyValids()
 
@@ -353,7 +353,7 @@ def play(grid, settings):
                         print("Com1 is thinking...")
                         settings.com1.calculateMove()
                 else:
-                    redo(grid)
+                    grid.redo()
             elif settings.coms == 2 and grid.player == settings.com2.player:
                 if grid.turn == grid.memory.turn:
                     theIn = input("press enter to continue or type Quit to quit")
@@ -363,7 +363,7 @@ def play(grid, settings):
                         print("Com2 is thinking...")
                         settings.com2.calculateMove()
                 else:
-                    redo(grid)
+                    grid.redo()
 
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
             # if player doesn't have forced takes move normally
@@ -382,43 +382,6 @@ def play(grid, settings):
             grid.turn += 1
         elif done and done != 2:
             break
-
-
-def replay(grid):
-        for i in range(grid.turn, 0, -1):
-            grid.undo()
-        grid.printGrid()
-        while True:
-            input("press enter to continue: ")
-            redo(grid)
-            grid.printGrid()
-            if grid.turn >= grid.memory.turn:
-                break
-        print("REPLAY FINISHED")
-        input("press enter to go back to menu")
-
-
-def redo(grid):
-    nextTurn = grid.turn
-    if nextTurn >= grid.memory.turn:
-        print("NO MORE REDOs")
-    else:
-        grid.ForcedPieces.clear()
-        grid.DoubleTakes.clear()
-        grid.emptyValids()
-        for p in grid.memory.usedPieces[nextTurn]:
-            if nextTurn in p.turn:
-                xy = p.turn.get(nextTurn)
-                grid.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
-            else:
-                p.turnTaken = nextTurn
-                if p.player == 1:
-                    grid.whitePieces.remove(p)
-                else:
-                    grid.blackPieces.remove(p)
-                grid.squares[p.xy[0]][p.xy[1]] = grid.blackSpace
-        grid.turn += 1
-        grid.player *= -1
 
 
 # define main

@@ -110,9 +110,9 @@ class Grid:
         # set player to player 1
         self.player = 1
         # empty lists and sets
-        self.squares = []
-        self.whitePieces = []
-        self.blackPieces = []
+        self.squares.clear()
+        self.whitePieces.clear()
+        self.blackPieces.clear()
         self.usableSquares = set([])
         self.ForcedPieces.clear()
         self.DoubleTakes.clear()
@@ -492,3 +492,38 @@ class Grid:
                 if p.king == lastTurn:
                     p.king = 0
             self.player *= -1
+
+    def redo(self):
+        nextTurn = self.turn
+        if nextTurn >= self.memory.turn:
+            print("NO MORE REDOs")
+        else:
+            self.ForcedPieces.clear()
+            self.DoubleTakes.clear()
+            self.emptyValids()
+            for p in self.memory.usedPieces[nextTurn]:
+                if nextTurn in p.turn:
+                    xy = p.turn.get(nextTurn)
+                    self.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
+                else:
+                    p.turnTaken = nextTurn
+                    if p.player == 1:
+                        self.whitePieces.remove(p)
+                    else:
+                        self.blackPieces.remove(p)
+                    self.squares[p.xy[0]][p.xy[1]] = self.blackSpace
+            self.turn += 1
+            self.player *= -1
+
+    def replay(self):
+        for i in range(self.turn, 0, -1):
+            self.undo()
+        self.printGrid()
+        while True:
+            input("press enter to continue: ")
+            self.redo()
+            self.printGrid()
+            if self.turn >= self.memory.turn:
+                break
+        print("REPLAY FINISHED")
+        input("press enter to go back to menu")
