@@ -22,7 +22,8 @@ class AI:
         self.depth = 5
 
     # return index of smallest value in list
-    def minIndex(self, theList):
+    @staticmethod
+    def minIndex(theList):
         minimum = theList[0]
         minIndex = [0]
         # from second element in list onward
@@ -38,7 +39,8 @@ class AI:
         return minIndex
 
     # return index of largest value in list
-    def maxIndex(self, theList):
+    @staticmethod
+    def maxIndex(theList):
         maximum = theList[0]
         maxIndex = [0]
         # from second element in list onward
