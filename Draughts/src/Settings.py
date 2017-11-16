@@ -2,7 +2,6 @@
 from Grid import Grid
 from AI import AI
 
-
 __author__ = 'Emma'
 __project__ = 'Draughts'
 

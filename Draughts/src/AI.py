@@ -6,6 +6,7 @@ import random
 __author__ = 'Emma'
 __project__ = 'Draughts'
 
+
 class AI:
     # AI constructor
     def __init__(self, grid, player):
