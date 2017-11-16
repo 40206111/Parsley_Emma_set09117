@@ -18,21 +18,23 @@ def menu(grid, settings):
             theIn = input("Play, Replay, NewGame, Settings, Rules, Exit: ")
         else:
             # set theIn to input
-            theIn = input("Play, NewGame, Settings, Rules, Exit: ")
+            theIn = input("Play, Settings, Rules, Exit: ")
         # make theIn lowercase
         theIn = theIn.lower()
         # play game
         if theIn == "play":
             if settings.coms == 2 or (settings.coms == 1 and settings.com1.player == 1):
                 grid.printGrid()
-                input("press enter to continue")
             play(grid, settings)
         # reset grid and play
-        elif theIn == "newgame":
+        elif theIn == "newgame" and grid.memory.turn > 0:
             # reset grid
             grid.createGrid()
+            if settings.coms == 2 or (settings.coms == 1 and settings.com1.player == 1):
+                grid.printGrid()
             play(grid, settings)
         elif theIn == "replay" and grid.memory.turn > 0:
+            print(grid.turn)
             replay(grid)
         # view settings
         elif theIn == "settings":
@@ -282,7 +284,7 @@ def play(grid, settings):
         # check if anyone has Won
         if len(grid.blackPieces) == 0:
             print()
-            if settings.coms == 0:
+            if settings.coms == 0 or (settings.coms == 1 and settings.com1.player != 1):
                 grid.printGrid()
             print("\nPLAYER 1 WINS!\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
@@ -291,7 +293,7 @@ def play(grid, settings):
             break
         elif len(grid.whitePieces) == 0:
             print()
-            if settings.coms == 0:
+            if settings.coms == 0  or (settings.coms == 1 and settings.com1.player != -1):
                 grid.printGrid()
             print("\nPLAYER 2 WINS\n")
             theIn = input("Would you like to replay your game now(y/n): ").lower()
@@ -330,6 +332,7 @@ def play(grid, settings):
         else:
             print("\nPLAYER 2's TURN (" + grid.blackPiece + ")")
 
+        done = False
         if settings.coms > 0:
             if grid.player == settings.com1.player:
                 theIn = ""
@@ -339,17 +342,26 @@ def play(grid, settings):
                 if theIn.lower() == "undo":
                     grid.undo()
                 elif grid.turn == grid.memory.turn:
-                    settings.com1.calculateMove()
                     if settings.coms == 2:
-                        input("press enter to continue")
+                        theIn = input("press enter to continue or type Quit to quit")
+                        if theIn.lower() == "quit":
+                            done = True
+                        else:
+                            print("Com1 is thinking...")
+                            settings.com1.calculateMove()
                 else:
                     redo(grid)
             elif settings.coms == 2 and grid.player == settings.com2.player:
                 if grid.turn == grid.memory.turn:
-                    settings.com2.calculateMove()
-                    input("press enter to continue")
+                    theIn = input("press enter to continue or type Quit to quit")
+                    if theIn.lower() == "quit":
+                        done = True
+                    else:
+                        print("Com2 is thinking...")
+                        settings.com2.calculateMove()
+                else:
+                    redo(grid)
 
-        done = False
         if (settings.coms == 1 and settings.com1.player != grid.player) or settings.coms == 0:
             # if player doesn't have forced takes move normally
             if not grid.ForcedPieces:
