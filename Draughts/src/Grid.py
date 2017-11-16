@@ -103,7 +103,7 @@ class Grid:
             self.width = width
         self.pieceNo = (self.width / 2) * self.rows
 
-# *********** Methods **********
+# *********** Create, Reset and Print **********
 
     # create grid method
     def createGrid(self):
@@ -142,8 +142,10 @@ class Grid:
                 else:
                     self.squares[i].append(self.blackSpace)
                     self.usableSquares.update([(i, j)])
+        # reset turns
         self.memory.turn = 0
         self.turn = 0
+        # reset memory
         self.memory.usedPieces.clear()
 
     # print grid method
@@ -178,41 +180,20 @@ class Grid:
         # new line
         print()
 
-    # method to test if square is a blackspace and empty
-    def testAvailable(self, i, j):
-        # if it's a useable square and has no piece in it return true
-        if (i, j) in self.usableSquares and (self.squares[i][j] == self.blackSpace):
-            return True
-        else:
-            return False
+    # method to reset the pieces in grid to work with edited grid settings
+    def resetGrid(self):
+        # loop through white pieces
+        for p in self.whitePieces:
+            # set default and king strings
+            p.col = self.whitePiece
+            p.kingLetter = self.whiteKing
+        # loop through black pieces
+        for p in self.blackPieces:
+            # set default and king strings
+            p.col = self.blackPiece
+            p.kingLetter = self.blackKing
 
-    # empty all valid squares
-    def emptyValids(self):
-        # loop through valid pieces
-        for v in self.validPlaces:
-            # set valid square to be empty square
-            self.squares[v[0]][v[1]] = self.blackSpace
-        # clear valid spaces
-        self.validPlaces.clear()
-
-    # method to move normally
-    def normalMove(self, start1, start2, end1, end2):
-        # empty valid pieces
-        self.emptyValids()
-        # set tempPiece to piece in start square
-        tempPiece = self.squares[start1][start2]
-        # check if should become king
-        if end1 == 0 and tempPiece.player == 1 and tempPiece.king == 0:
-            tempPiece.king = self.turn
-        elif end1 == self.height - 1 and tempPiece.player == -1 and tempPiece.king == 0:
-            tempPiece.king = self.turn
-        # put tempPiece in end square
-        self.squares[end1][end2] = tempPiece
-        # set pieces new coordinates
-        self.squares[end1][end2].xy = (end1, end2)
-        self.squares[end1][end2].turn.update({self.turn: (start1, start2)})
-        # set start square to be empty
-        self.squares[start1][start2] = self.blackSpace
+# ************  Complete Movements **********************
 
     # method to complete move
     def completeMove(self, start1, start2, end1, end2):
@@ -240,20 +221,24 @@ class Grid:
             self.memory.updateUsed(self.squares[end1][end2], self.turn)
         return True
 
-    def jumpPiece(self, player, start1, start2, y, x):
-        # tell piece it has been taken
-        self.squares[y][x].turnTaken = self.turn
-        self.squares[y][x].turn.pop(self.turn, None)
-        self.memory.updateUsed(self.squares[y][x], self.turn)
-        # if remove pieces from opposite players list
-        if player == 1:
-            self.blackPieces.remove(self.squares[y][x])
-        else:
-            self.whitePieces.remove(self.squares[y][x])
-        # set place where taken piece was to empty
-        self.squares[y][x] = self.blackSpace
-        # complete move as normal
-        self.normalMove(start1, start2, y + (y-start1), x + (x - start2))
+    # method to move normally
+    def normalMove(self, start1, start2, end1, end2):
+        # empty valid pieces
+        self.emptyValids()
+        # set tempPiece to piece in start square
+        tempPiece = self.squares[start1][start2]
+        # check if should become king
+        if end1 == 0 and tempPiece.player == 1 and tempPiece.king == 0:
+            tempPiece.king = self.turn
+        elif end1 == self.height - 1 and tempPiece.player == -1 and tempPiece.king == 0:
+            tempPiece.king = self.turn
+        # put tempPiece in end square
+        self.squares[end1][end2] = tempPiece
+        # set pieces new coordinates
+        self.squares[end1][end2].xy = (end1, end2)
+        self.squares[end1][end2].turn.update({self.turn: (start1, start2)})
+        # set start square to be empty
+        self.squares[start1][start2] = self.blackSpace
 
     # method for completing move if you can take
     def completeTakes(self, start1, start2, end1, end2):
@@ -267,7 +252,9 @@ class Grid:
             # make sure y and x are ints
             y = int(y)
             x = int(x)
+            # if space 1 away doesn't have a piece in
             if self.testAvailable(y, x):
+                # multiple takes is true
                 multi = True
             else:
                 self.jumpPiece(player, start1, start2, y, x)
@@ -278,8 +265,9 @@ class Grid:
                 self.DoubleTakes.clear()
 
         else:
+            # multiple takes is true
             multi = True
-
+        # if multiple takes is true
         if multi:
             # if the end doesn't have multiple routes to get to it
             if (end1, end2) not in self.DoubleTakes:
@@ -335,7 +323,6 @@ class Grid:
                                     output = output + self.takeRoute(jumped, piece, start1 + i + i, start2 + j + j, end1, end2)
                                     # if output is not equal to this one or end
                                     if output[len(output) - 1] != (start1 + i, start2 + j) or (start1 + i + i == end1 and start2 + j + j == end2):
-                                        #return output
                                         return output
                                     else:
                                         jumped.clear()
@@ -345,6 +332,25 @@ class Grid:
                         pass
         return[]
 
+    # method to actually take pieces
+    def jumpPiece(self, player, start1, start2, y, x):
+        # tell piece it has been taken
+        self.squares[y][x].turnTaken = self.turn
+        self.squares[y][x].turn.pop(self.turn, None)
+        self.memory.updateUsed(self.squares[y][x], self.turn)
+        # if remove pieces from opposite players list
+        if player == 1:
+            self.blackPieces.remove(self.squares[y][x])
+        else:
+            self.whitePieces.remove(self.squares[y][x])
+        # set place where taken piece was to empty
+        self.squares[y][x] = self.blackSpace
+        # complete move as normal
+        self.normalMove(start1, start2, y + (y-start1), x + (x - start2))
+
+# ***************** Takes **********************
+
+    # method to add piece to forced pieces if it can take
     def canTake(self, piece, y, x):
         # + 1 in direction piece is allowed to move
         i = y - piece.player
@@ -379,7 +385,7 @@ class Grid:
                 except:
                     pass
 
-    # method for
+    # method to show and store all the valid spaces a piece can move while taking
     def takes(self, jumped, piece, y, x):
         # + 1 in direction piece is allowed to move
         i = y - piece.player
@@ -431,13 +437,7 @@ class Grid:
                 except:
                     pass
 
-    def resetGrid(self):
-        for p in self.whitePieces:
-            p.col = self.whitePiece
-            p.kingLetter = self.whiteKing
-        for p in self.blackPieces:
-            p.col = self.blackPiece
-            p.kingLetter = self.blackKing
+# *************** Valids **********************
 
     # method to look for valid places to move to
     def FindValids(self, y, x):
@@ -465,22 +465,43 @@ class Grid:
                     # add grid space to valid spaces
                     self.validPlaces.update([(i, x + j)])
 
+    # empty all valid squares
+    def emptyValids(self):
+        # loop through valid pieces
+        for v in self.validPlaces:
+            # set valid square to be empty square
+            self.squares[v[0]][v[1]] = self.blackSpace
+        # clear valid spaces
+        self.validPlaces.clear()
+
+# *************** Memory Methods *****************
+
+    # method to undo last move
     def undo(self):
+        # if first turn
         if self.turn == 0:
+            # print error
             print("NO MORE UNDOs")
         else:
-            lastTurn = self.turn - 1
+            # clear lists
             self.ForcedPieces.clear()
             self.DoubleTakes.clear()
             self.emptyValids()
+            # take away 1 from turn
             self.turn -= 1
-            for p in self.memory.usedPieces[lastTurn]:
-                if lastTurn in p.turn:
-                    xy = p.turn.get(lastTurn)
+            # for all pieces that changed last turn
+            for p in self.memory.usedPieces[self.turn]:
+                # if piece moved
+                if self.turn in p.turn:
+                    xy = p.turn.get(self.turn)
+                    # move piece back
                     self.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
-                if lastTurn != 0 and p.turnTaken == lastTurn:
+                # if piece was taken
+                if self.turn != 0 and p.turnTaken == self.turn:
+                    # put piece back
                     p.turnTaken = 0
                     self.squares[p.xy[0]][p.xy[1]] = p
+                    # make sure piece has correct settings
                     if p.player == 1:
                         self.whitePieces.append(p)
                         p.col = self.whitePiece
@@ -489,41 +510,74 @@ class Grid:
                         self.blackPieces.append(p)
                         p.col = self.blackPiece
                         p.kingLetter = self.blackKing
-                if p.king == lastTurn:
+                # if piece became king
+                if p.king == self.turn:
+                    # stop piece from being king
                     p.king = 0
+            # set player to other player
             self.player *= -1
 
+    # method to redo move
     def redo(self):
-        nextTurn = self.turn
-        if nextTurn >= self.memory.turn:
+        # if no future turns
+        if self.turn >= self.memory.turn:
+            # print error
             print("NO MORE REDOs")
         else:
+            # clear lists
             self.ForcedPieces.clear()
             self.DoubleTakes.clear()
             self.emptyValids()
-            for p in self.memory.usedPieces[nextTurn]:
-                if nextTurn in p.turn:
-                    xy = p.turn.get(nextTurn)
+            # for all pieces that changed
+            for p in self.memory.usedPieces[self.turn]:
+                # if piece moved
+                if self.turn in p.turn:
+                    xy = p.turn.get(self.turn)
+                    # move it back
                     self.normalMove(p.xy[0], p.xy[1], xy[0], xy[1])
                 else:
-                    p.turnTaken = nextTurn
+                    # set turn taken to this turn
+                    p.turnTaken = self.turn
+                    # remove piece again
                     if p.player == 1:
                         self.whitePieces.remove(p)
                     else:
                         self.blackPieces.remove(p)
+                    # empty gris square
                     self.squares[p.xy[0]][p.xy[1]] = self.blackSpace
+            # add 1 to turn
             self.turn += 1
+            # change player
             self.player *= -1
 
+    # method to replay game
     def replay(self):
+        # undo to start
         for i in range(self.turn, 0, -1):
             self.undo()
+        # print grid
         self.printGrid()
+        # redo to end
         while True:
+            # pause between redos
             input("press enter to continue: ")
             self.redo()
             self.printGrid()
+            # stop when end reached
             if self.turn >= self.memory.turn:
                 break
+        # print end
         print("REPLAY FINISHED")
         input("press enter to go back to menu")
+
+# ************** Helper ***************
+
+    # method to test if square is a blackspace and empty
+    def testAvailable(self, i, j):
+        # if it's a useable square and has no piece in it return true
+        if (i, j) in self.usableSquares and (self.squares[i][j] == self.blackSpace):
+            return True
+        else:
+            return False
+
+
