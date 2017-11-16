@@ -1,9 +1,10 @@
 from Grid import Grid
 from Memory import Tree
-
 import copy
 import random
 
+__author__ = 'Emma'
+__project__ = 'Draughts'
 
 class AI:
     # AI constructor
@@ -20,6 +21,8 @@ class AI:
         self.move = []
         # amount of turns it looks at before deciding it's move
         self.depth = 5
+
+# ********** Finding Max and Min ***************
 
     # return index of smallest value in list
     @staticmethod
@@ -54,6 +57,9 @@ class AI:
                 maxIndex.append(i)
         # return index of the minimum
         return maxIndex
+
+
+# *************** Calculate and Do Move ***********
 
     # method to calculate and complete move
     def calculateMove(self):
@@ -93,6 +99,8 @@ class AI:
         self.grid.printGrid()
         # clear moves
         self.move.clear()
+
+# ************* MiniMax Algorithm ******************
 
     # method to get minimax score for player given
     def minimax(self, depth, grid, player, score):
@@ -170,6 +178,46 @@ class AI:
         # return score
         return score
 
+    # method to calculate takes a piece can make
+    def takeRoute(self, grid, jumped, move, piece, y, x):
+        # check if player can move backwards and forwards or not
+        if piece.king:
+            a = -1
+            b = 2
+        else:
+            a = -piece.player
+            b = -piece.player + 1
+
+        # loop through vertical ways piece can move
+        for i in range(a, b, 2):
+            # loop through left and right of piece
+            for j in range(-1, 2, 2):
+                # if 2 squares away is still on the board
+                if y + i + i in range(0, grid.height) and x + j + j in range(0, grid.width):
+                    try:
+                        # piece next to this piece is opponents piece
+                        if -piece.player == grid.squares[y + i][x + j].player:
+                            # if square 2 away is free and piece has not already been jumped
+                            if grid.testAvailable(y + i + i, x + j + j) and \
+                                            (y + i, x + j) not in jumped:
+                                # add to jumped
+                                jumped.add((y + i, x + j))
+                                # add space to take tree
+                                move.nodes.append(Tree((y + i + i, x + j + j)))
+                                # if piece becomes king from this move
+                                if not piece.king and (((y + i + i) == grid.height and piece.player == 1) or (
+                                                (y + i + i) == 0 and piece.player == -1)):
+                                    # add king score to node score
+                                    move.nodes[len(move.nodes) - 1].score += self.kingScore * piece.player
+                                # add take score to node score
+                                move.nodes[len(move.nodes) - 1].score += self.takeScore * piece.player
+                                # call methods with next space
+                                self.takeRoute(grid, jumped, move.nodes[len(move.nodes) - 1], piece, y + i + i, x + j + j)
+                    except:
+                        pass
+        # return take tree
+        return move
+
     # do the moves in the take tree
     def moveThroughTreeNodes(self, treeRoute, grid, score, otherpieces, player, depth):
         # loop through nodes in tree route
@@ -221,42 +269,3 @@ class AI:
         # return score
         return score
 
-    # method to calculate takes a piece can make
-    def takeRoute(self, grid, jumped, move, piece, y, x):
-        # check if player can move backwards and forwards or not
-        if piece.king:
-            a = -1
-            b = 2
-        else:
-            a = -piece.player
-            b = -piece.player + 1
-
-        # loop through vertical ways piece can move
-        for i in range(a, b, 2):
-            # loop through left and right of piece
-            for j in range(-1, 2, 2):
-                # if 2 squares away is still on the board
-                if y + i + i in range(0, grid.height) and x + j + j in range(0, grid.width):
-                    try:
-                        # piece next to this piece is opponents piece
-                        if -piece.player == grid.squares[y + i][x + j].player:
-                            # if square 2 away is free and piece has not already been jumped
-                            if grid.testAvailable(y + i + i, x + j + j) and \
-                                            (y + i, x + j) not in jumped:
-                                # add to jumped
-                                jumped.add((y + i, x + j))
-                                # add space to take tree
-                                move.nodes.append(Tree((y + i + i, x + j + j)))
-                                # if piece becomes king from this move
-                                if not piece.king and (((y + i + i) == grid.height and piece.player == 1) or (
-                                                (y + i + i) == 0 and piece.player == -1)):
-                                    # add king score to node score
-                                    move.nodes[len(move.nodes) - 1].score += self.kingScore * piece.player
-                                # add take score to node score
-                                move.nodes[len(move.nodes) - 1].score += self.takeScore * piece.player
-                                # call methods with next space
-                                self.takeRoute(grid, jumped, move.nodes[len(move.nodes) - 1], piece, y + i + i, x + j + j)
-                    except:
-                        pass
-        # return take tree
-        return move
