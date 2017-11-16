@@ -349,6 +349,9 @@ def play(grid, settings):
                         else:
                             print("Com1 is thinking...")
                             settings.com1.calculateMove()
+                    else:
+                        print("Com1 is thinking...")
+                        settings.com1.calculateMove()
                 else:
                     redo(grid)
             elif settings.coms == 2 and grid.player == settings.com2.player:
