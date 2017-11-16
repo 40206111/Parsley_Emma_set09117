@@ -305,7 +305,6 @@ class Grid:
                     # clear double takes
                     self.DoubleTakes.clear()
 
-
     # method to calculate route that gets a piece from start to end through taking
     def takeRoute(self, jumped, piece, start1, start2, end1, end2):
         # declare output

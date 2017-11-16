@@ -245,6 +245,116 @@ class Settings:
             if theIn == '5':
                 break
 
+    def aiSets(self):
+        done = False
+        change = False
+        tempDepth = self.com1.depth
+        tempKing = self.com1.kingScore
+        tempTake = self.com1.takeScore
+        tempWin = self.com1.win
+        while not done:
+            print("\n COM SETTINGS\n")
+            print("1. Depth: " + str(tempDepth))
+            print("2. King Score: " + str(tempKing))
+            print("3. Take Score: " + str(tempTake))
+            print("4. Win Score: " + str(tempWin))
+            print("------------------------")
+            print("5. Set Com1")
+            print("6. set Com2")
+            print("7. Set Both")
+            print("------------------------")
+            print("8. Back")
+
+            theIn = input("enter number: ")
+            print()
+
+            # depth setting
+            if theIn == '1':
+                while True:
+                    print("This number represents how many moves the AI looks ahead before taking it's turn")
+                    print("The higher this number is the harder the AI will be but the longer it will take to take it's turn")
+                    print("type cancel to leave depth as it is")
+                    newIn = input("enter new Depth: ")
+                    if newIn.lower() == "cancel":
+                        break
+                    try:
+                        tempDepth = int(newIn)
+                        break
+                    except:
+                        print("ERROR: please enter a valid number")
+            # king score setting
+            if theIn == '2':
+                while True:
+                    print("This number represents the value of getting a king to the AI")
+                    print("The higher this value compared to the other scores the better it is considered to be")
+                    print("type cancel to leave king score as it is")
+                    newIn = input("enter new king score: ")
+                    if newIn.lower() == "cancel":
+                        break
+                    try:
+                        tempKing = int(newIn)
+                        break
+                    except:
+                        print("ERROR: please enter a valid number")
+            # take score setting
+            if theIn == '3':
+                while True:
+                    print("This number represents the value of taking a piece to the AI")
+                    print("The higher this value compared to the other scores the better it is considered to be")
+                    print("type cancel to leave take score as it is")
+                    newIn = input("enter new take score: ")
+                    if newIn.lower() == "cancel":
+                        break
+                    try:
+                        tempTake = int(newIn)
+                        break
+                    except:
+                        print("ERROR: please enter a valid number")
+            # win score setting
+            if theIn == '4':
+                while True:
+                    print("This number represents the value of winning to the AI")
+                    print("The higher this value compared to the other scores the better it is considered to be")
+                    print("type cancel to leave win score as it is")
+                    newIn = input("enter new win score: ")
+                    if newIn.lower() == "cancel":
+                        break
+                    try:
+                        tempWin = int(newIn)
+                        break
+                    except:
+                        print("ERROR: please enter a valid number")
+            # set com 1
+            if theIn == '5' or theIn == '7':
+                self.com1.depth = tempDepth
+                self.com1.kingScore = tempKing
+                self.com1.takeScore = tempTake
+                self.com1.win = tempWin
+                print("COMPLETE: Updated Com1")
+                change = True
+            # set com 2
+            if theIn == '6' or theIn == '7':
+                self.com2.depth = tempDepth
+                self.com2.kingScore = tempKing
+                self.com2.takeScore = tempTake
+                self.com2.win = tempWin
+                print("COMPLETE: Updated Com2")
+                change = True
+            # back
+            if theIn == '8':
+                if change:
+                    done = True
+                else:
+                    while True:
+                        print("You haven't set any changes you have made, are you sure you want to leave?")
+                        newIn = input("Yes/No: ")
+                        if newIn.lower() == "yes" or newIn.lower() == "y":
+                            done = True
+                            break
+                        elif newIn.lower() == "no" or newIn.lower() == "n":
+                            break
+
+
     # general settings
     def settings(self):
         # initialise done to false
@@ -265,9 +375,14 @@ class Settings:
                     print("4. Com Player: 1")
                 else:
                     print("4. Com Player: 2")
-                print("5. Back")
+                print("5. Com Settings")
+                print("6. Back")
             else:
-                print("4. Back")
+                if self.coms == 2:
+                    print("4. Com Settings")
+                    print("5. Back")
+                else:
+                    print("4. Back")
 
             # set theIn to input
             theIn = input("enter number: ")
@@ -286,6 +401,8 @@ class Settings:
                     self.com1.player = -1
             elif theIn == '4' and self.coms == 1:
                 self.com1.player *= -1
+            elif theIn == '5' and self.coms == 1 or theIn == '4' and self.coms == 2:
+                self.aiSets()
             # back to menu
-            elif theIn == '4' or (theIn == '5' and self.coms == 1):
+            elif theIn == '4' or (theIn == '5' and self.coms == 2) or (theIn == '6' and self.coms == 1):
                 done = True

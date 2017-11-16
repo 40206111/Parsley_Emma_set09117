@@ -15,7 +15,7 @@ class AI:
         # set Scores for minmax calculation
         self.takeScore = 3
         self.kingScore = 7
-        self.win = 100
+        self.win = 20
         # list of possible moves for this turn
         self.move = []
         # amount of turns it looks at before deciding it's move
