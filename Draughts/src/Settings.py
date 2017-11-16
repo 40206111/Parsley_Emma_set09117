@@ -1,3 +1,4 @@
+# imports
 from Grid import Grid
 from AI import AI
 
@@ -8,44 +9,68 @@ __project__ = 'Draughts'
 
 class Settings:
     def __init__(self, grid, coms):
+        # set settings variables
         self.grid = grid
         self.com1 = AI(grid, -1)
         self.com2 = AI(grid, 1)
         self.coms = coms
 
-    # define Draughts rules
-    def rules(self):
-        # rules printed based on the board settings
-        print("\nRULES:", end="\n\n")
-        print("Player 1: ", end="")
-        if (self.coms > 0 and self.com1.player == 1) or self.coms == 2:
-            print("COMPUTER")
-        else:
-            print("HUMAN")
-        print("Player 2: ", end="")
-        if (self.coms > 0 and self.com1.player == -1) or self.coms == 2:
-            print("COMPUTER\n")
-        else:
-            print("HUMAN\n")
-        print("• ", end="")
-        print(self.grid.width, end="x")
-        print(self.grid.height, end=" grid.\n")
-        print("• Each player has", end=" ")
-        print(int(self.grid.pieceNo), end=" pieces\n")
-        print("• The counters go on the first", end=" ")
-        print(self.grid.rows, end=" row(s)\n")
-        print("• Player 1's pieces are shown by:", end=" ")
-        print(self.grid.whitePiece, end="\n")
-        print("• Player 2's pieces are shown by:", end=" ")
-        print(self.grid.blackPiece, end="\n\n")
+# ************ Settings ***************
 
-        print("• Pieces can only move Diagonally towards opponent")
-        print("• An opponents piece is Captured by jumping your piece over it diagonally")
-        print("• All landing spaces must be vacant")
-        print("• If an opponents piece can be captured it must be")
-        print("• multiple captures are possible if there's a blank space between each one")
-        print("• Pieces that get to the other side of the board become Kings and can move forward and backwards")
-        print()
+    # general settings
+    def settings(self):
+        # initialise done to false
+        done = False
+        # do while not done
+        while not done:
+            # print settings options
+            print("\nSettings:\n")
+            print("1. See Board Settings")
+            print("2. See Piece settings")
+            print("3. Players:", end=" ")
+            # print What AI are playing
+            if self.coms == 0:
+                print("2 Humans")
+            else:
+                print(str(self.coms) + " Com(s)")
+            if self.coms == 1:
+                if self.com1.player == 1:
+                    print("4. Com Player: 1")
+                else:
+                    print("4. Com Player: 2")
+                print("5. Com Settings")
+                print("6. Back")
+            else:
+                if self.coms == 2:
+                    print("4. Com Settings")
+                    print("5. Back")
+                else:
+                    print("4. Back")
+
+            # set theIn to input
+            theIn = input("enter number: ")
+            # board settings
+            if theIn == "1":
+                self.boardSets(False)
+            # piece settings
+            elif theIn == '2':
+                self.pieceSets()
+            # toggle 2 players
+            elif theIn == '3':
+                self.coms += 1
+                if self.coms > 2:
+                    self.coms = 0
+                elif self.coms == 2:
+                    self.com1.player = -1
+            # com1 player setting
+            elif theIn == '4' and self.coms == 1:
+                self.com1.player *= -1
+            # ai settings
+            elif theIn == '5' and self.coms == 1 or theIn == '4' and self.coms == 2:
+                self.aiSets()
+            # back to menu
+            elif theIn == '4' or (theIn == '5' and self.coms == 2) or (theIn == '6' and self.coms == 1):
+                done = True
 
     # settings for board
     def boardSets(self, change):
@@ -245,14 +270,18 @@ class Settings:
             if theIn == '5':
                 break
 
+    # settings for AI
     def aiSets(self):
         done = False
         change = False
+        # set temp values to com1 values
         tempDepth = self.com1.depth
         tempKing = self.com1.kingScore
         tempTake = self.com1.takeScore
         tempWin = self.com1.win
+        # loop while not done
         while not done:
+            # print settings
             print("\n COM SETTINGS\n")
             print("1. Depth: " + str(tempDepth))
             print("2. King Score: " + str(tempKing))
@@ -265,6 +294,7 @@ class Settings:
             print("------------------------")
             print("8. Back")
 
+            # take input
             theIn = input("enter number: ")
             print()
 
@@ -278,9 +308,11 @@ class Settings:
                     if newIn.lower() == "cancel":
                         break
                     try:
+                        # set temp depth to given depth
                         tempDepth = int(newIn)
                         break
                     except:
+                        # print error
                         print("ERROR: please enter a valid number")
             # king score setting
             if theIn == '2':
@@ -292,9 +324,11 @@ class Settings:
                     if newIn.lower() == "cancel":
                         break
                     try:
+                        # set temp king score to given value
                         tempKing = int(newIn)
                         break
                     except:
+                        # print error
                         print("ERROR: please enter a valid number")
             # take score setting
             if theIn == '3':
@@ -306,9 +340,11 @@ class Settings:
                     if newIn.lower() == "cancel":
                         break
                     try:
+                        # set temp take score to given value
                         tempTake = int(newIn)
                         break
                     except:
+                        # print error
                         print("ERROR: please enter a valid number")
             # win score setting
             if theIn == '4':
@@ -320,31 +356,39 @@ class Settings:
                     if newIn.lower() == "cancel":
                         break
                     try:
+                        # set temp score to given value
                         tempWin = int(newIn)
                         break
                     except:
+                        # print error
                         print("ERROR: please enter a valid number")
             # set com 1
             if theIn == '5' or theIn == '7':
+                # set com1s values to given values
                 self.com1.depth = tempDepth
                 self.com1.kingScore = tempKing
                 self.com1.takeScore = tempTake
                 self.com1.win = tempWin
+                # print completed
                 print("COMPLETE: Updated Com1")
                 change = True
             # set com 2
             if theIn == '6' or theIn == '7':
+                # set com2s values to given values
                 self.com2.depth = tempDepth
                 self.com2.kingScore = tempKing
                 self.com2.takeScore = tempTake
                 self.com2.win = tempWin
+                # print completed
                 print("COMPLETE: Updated Com2")
                 change = True
             # back
             if theIn == '8':
+                # check if something was changed
                 if change:
                     done = True
                 else:
+                    # ask user if they're sure they want to exit without changing anything
                     while True:
                         print("You haven't set any changes you have made, are you sure you want to leave?")
                         newIn = input("Yes/No: ")
@@ -355,54 +399,38 @@ class Settings:
                             break
 
 
-    # general settings
-    def settings(self):
-        # initialise done to false
-        done = False
-        # do while not done
-        while not done:
-            # print settings options
-            print("\nSettings:\n")
-            print("1. See Board Settings")
-            print("2. See Piece settings")
-            print("3. Players:", end=" ")
-            if self.coms == 0:
-                print("2 Humans")
-            else:
-                print(str(self.coms) + " Com(s)")
-            if self.coms == 1:
-                if self.com1.player == 1:
-                    print("4. Com Player: 1")
-                else:
-                    print("4. Com Player: 2")
-                print("5. Com Settings")
-                print("6. Back")
-            else:
-                if self.coms == 2:
-                    print("4. Com Settings")
-                    print("5. Back")
-                else:
-                    print("4. Back")
+# ************ Rules ********************
 
-            # set theIn to input
-            theIn = input("enter number: ")
-            # board settings
-            if theIn == "1":
-                self.boardSets(False)
-            # piece settings
-            elif theIn == '2':
-                self.pieceSets()
-            # toggle 2 players
-            elif theIn == '3':
-                self.coms += 1
-                if self.coms > 2:
-                    self.coms = 0
-                elif self.coms == 2:
-                    self.com1.player = -1
-            elif theIn == '4' and self.coms == 1:
-                self.com1.player *= -1
-            elif theIn == '5' and self.coms == 1 or theIn == '4' and self.coms == 2:
-                self.aiSets()
-            # back to menu
-            elif theIn == '4' or (theIn == '5' and self.coms == 2) or (theIn == '6' and self.coms == 1):
-                done = True
+    # define Draughts rules
+    def rules(self):
+        # rules printed based on the board settings
+        print("\nRULES:", end="\n\n")
+        print("Player 1: ", end="")
+        if (self.coms > 0 and self.com1.player == 1) or self.coms == 2:
+            print("COMPUTER")
+        else:
+            print("HUMAN")
+        print("Player 2: ", end="")
+        if (self.coms > 0 and self.com1.player == -1) or self.coms == 2:
+            print("COMPUTER\n")
+        else:
+            print("HUMAN\n")
+        print("• ", end="")
+        print(self.grid.width, end="x")
+        print(self.grid.height, end=" grid.\n")
+        print("• Each player has", end=" ")
+        print(int(self.grid.pieceNo), end=" pieces\n")
+        print("• The counters go on the first", end=" ")
+        print(self.grid.rows, end=" row(s)\n")
+        print("• Player 1's pieces are shown by:", end=" ")
+        print(self.grid.whitePiece, end="\n")
+        print("• Player 2's pieces are shown by:", end=" ")
+        print(self.grid.blackPiece, end="\n\n")
+
+        print("• Pieces can only move Diagonally towards opponent")
+        print("• An opponents piece is Captured by jumping your piece over it diagonally")
+        print("• All landing spaces must be vacant")
+        print("• If an opponents piece can be captured it must be")
+        print("• multiple captures are possible if there's a blank space between each one")
+        print("• Pieces that get to the other side of the board become Kings and can move forward and backwards")
+        print()
